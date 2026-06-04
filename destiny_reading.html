@@ -597,7 +597,7 @@ function palaceLine(p, school) {
   const majors = (p.major_stars || []).map(s => starWithMark(s, school));
   const minors = (p.minor_stars || []).map(s => starWithMark(s, school));
   const adjs = (p.adjective_stars || []).map(s => s.name);
-  const stages = [p.changsheng12, p.boshi12].filter(Boolean);
+  const stages = [p.changsheng12, p.boshi12, p.jiangqian12, p.suiqian12].filter(Boolean);
   const parts = [];
   if (majors.length) parts.push(majors.join("，"));
   if (minors.length) parts.push(minors.join("，"));
