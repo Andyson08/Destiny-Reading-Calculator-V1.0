@@ -9,7 +9,7 @@ Built by **Andy Low**.
 ## What it does
 
 - Generates a full ZWDS 12-palace natal chart and BaZi Four Pillars chart from your name, gender, date and time of birth
-- Supports Major Luck Cycle (大运) and Annual Luck (流年) navigation
+- Supports Major Luck Cycle (大运) navigation
 - Exports your chart as a text file ready to submit to an AI for a reading
 - Saves your charts automatically in your browser — no account needed
 - Available in English and Chinese (中文)
