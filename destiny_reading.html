@@ -1,0 +1,2350 @@
+<!--
+  Destiny Reading Calculator
+  Copyright © 2026 Andy Low
+  Licensed under the MIT Licence
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software to use, copy, modify, merge, publish, and
+  distribute it, subject to the following condition:
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the software.
+-->
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="author" content="Andy Low"/>
+<meta name="copyright" content="Copyright © 2026 Andy Low. MIT Licence."/>
+<meta name="description" content="Destiny Reading Calculator — Zi Wei Dou Shu &amp; BaZi chart tool by Andy Low"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<title>Destiny Reading 紫微斗数</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/iztro@2.5.4/dist/iztro.min.js"></script>
+<script src="https://unpkg.com/lunar-javascript/lunar.js"></script>
+<style>
+body{background:#0f172a;margin:0;font-family:system-ui,sans-serif;}
+/* English theme — Apple clean */
+body.en-body{background:#f6f2eb !important;}
+.en-theme{
+  background:#f6f2eb;
+  color:#1d1d1f;
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:-0.01em;
+}
+/* Palace cells — subtle rounded corners */
+.en-theme .overflow-hidden.cursor-pointer{border-radius:6px !important;}
+/* Background layers */
+.en-theme .bg-slate-950,.en-theme .bg-slate-950\/80{background:#f6f2eb !important;}
+.en-theme .bg-slate-900\/70,.en-theme .bg-slate-900\/60,.en-theme .bg-slate-900{background:#f0eadc !important;}
+.en-theme .bg-slate-800,.en-theme .bg-slate-800\/60,.en-theme .bg-slate-800\/70{background:#f0eadc !important;}
+.en-theme .bg-amber-900\/40{background:#f0eadc !important;}
+.en-theme .bg-slate-700{background:#e4dccc !important;}
+.en-theme .hover\:bg-slate-800:hover,.en-theme .hover\:bg-slate-700:hover{background:#ddd5c5 !important;}
+/* Borders — lighter, hairline */
+.en-theme .border-slate-700{border-color:#ccc4b0 !important;}
+.en-theme .border-amber-400\/40{border-color:#b89828 !important;}
+/* Text — Apple system greys (neutral, no blue cast) */
+.en-theme .text-slate-100{color:#1d1d1f !important;}
+.en-theme .text-slate-200{color:#3a3a3c !important;}
+.en-theme .text-slate-300{color:#48484a !important;}
+.en-theme .text-slate-400{color:#6e6e73 !important;}
+.en-theme .text-slate-500{color:#8e8e93 !important;}
+.en-theme .text-slate-600{color:#aeaeb2 !important;}
+/* Gold */
+.en-theme .text-amber-300{color:#8a6600 !important;}
+.en-theme .text-amber-200{color:#7a5800 !important;}
+.en-theme .text-amber-100{color:#5a3c00 !important;}
+.en-theme .bg-amber-500{background:#c49a28 !important;}
+.en-theme .hover\:bg-amber-400:hover{background:#d4aa38 !important;}
+/* Buttons */
+.en-theme .bg-rose-700{background:#c0392b !important;}
+.en-theme .hover\:bg-rose-600:hover{background:#d44535 !important;}
+/* Star colours on light bg */
+.en-theme .bg-emerald-900\/40{background:#c8e8d0 !important;}
+.en-theme .text-emerald-400{color:#1a7a3a !important;}
+.en-theme .text-emerald-300{color:#1a6a30 !important;}
+.en-theme .text-sky-300{color:#1a5a8a !important;}
+.en-theme .text-sky-400{color:#0d4e7a !important;}
+.en-theme .text-rose-300,.en-theme .text-rose-400{color:#8b2020 !important;}
+.en-theme .text-yellow-300{color:#7a6000 !important;}
+.en-theme .text-violet-300{color:#5a3a8a !important;}
+/* Ring / highlight */
+.en-theme .ring-amber-400{--tw-ring-color:#b8921c !important;}
+/* Form elements */
+.en-theme select{background:#ebe4d6 !important;color:#1d1d1f !important;border-color:#ccc4b0 !important;border-radius:6px !important;}
+.en-theme input[type="date"],.en-theme input[type="time"],.en-theme input[type="text"]{background:#ebe4d6 !important;color:#1d1d1f !important;border-radius:6px !important;}
+.en-theme .accent-amber-400{accent-color:#c49a28 !important;}
+.en-theme .shadow-\[0_0_12px_rgba\(251\,191\,36\,0\.4\)\]{box-shadow:0 0 12px rgba(180,140,20,0.4) !important;}
+
+/* English Dark mode */
+body.en-dark-body{background:#0a0a0a !important;}
+.en-dark-theme{
+  background:#0a0a0a;
+  color:#f5f5f5;
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:-0.01em;
+}
+.en-dark-theme .overflow-hidden.cursor-pointer{border-radius:6px !important;}
+.en-dark-theme .bg-slate-950,.en-dark-theme .bg-slate-950\/80{background:#0a0a0a !important;}
+.en-dark-theme .bg-slate-900\/70,.en-dark-theme .bg-slate-900\/60,.en-dark-theme .bg-slate-900{background:#111111 !important;}
+.en-dark-theme .bg-slate-800,.en-dark-theme .bg-slate-800\/60,.en-dark-theme .bg-slate-800\/70{background:#111111 !important;}
+.en-dark-theme .bg-amber-900\/40{background:#111111 !important;}
+.en-dark-theme .bg-slate-700{background:#222222 !important;}
+.en-dark-theme .hover\:bg-slate-800:hover,.en-dark-theme .hover\:bg-slate-700:hover{background:#2a2a2a !important;}
+.en-dark-theme .border-slate-700{border-color:#2e2e2e !important;}
+.en-dark-theme .border-amber-400\/40{border-color:#d4a017 !important;}
+.en-dark-theme .text-slate-100{color:#f5f5f5 !important;}
+.en-dark-theme .text-slate-200{color:#e5e5e5 !important;}
+.en-dark-theme .text-slate-300{color:#d4d4d4 !important;}
+.en-dark-theme .text-slate-400{color:#c0c0c0 !important;}
+.en-dark-theme .text-slate-500{color:#9e9e9e !important;}
+.en-dark-theme .text-slate-600{color:#787878 !important;}
+.en-dark-theme .text-amber-300{color:#d4af37 !important;}
+/* Brand gold for zwds chrome in dark mode */
+.en-dark-theme .zwds-chrome .text-amber-300,.en-dark-theme .zwds-chrome .text-amber-200{color:#d4af37 !important;}
+.en-dark-theme .zwds-chrome .bg-amber-500{background:#d4af37 !important;}
+.en-dark-theme .zwds-chrome .hover\:bg-amber-400:hover{background:#e4c048 !important;}
+.en-dark-theme .text-amber-200{color:#c49a20 !important;}
+.en-dark-theme .text-amber-100{color:#e8d080 !important;}
+.en-dark-theme .bg-amber-500{background:#c9980a !important;}
+.en-dark-theme .hover\:bg-amber-400:hover{background:#d4a517 !important;}
+.en-dark-theme .bg-rose-700{background:#dc2626 !important;}
+.en-dark-theme .hover\:bg-rose-600:hover{background:#ef4444 !important;}
+.en-dark-theme .bg-emerald-900\/40{background:#064e3b !important;}
+.en-dark-theme .text-emerald-400{color:#34d399 !important;}
+.en-dark-theme .text-emerald-300{color:#6ee7b7 !important;}
+.en-dark-theme .text-sky-300{color:#7dd3fc !important;}
+.en-dark-theme .text-sky-400{color:#38bdf8 !important;}
+.en-dark-theme .text-rose-300,.en-dark-theme .text-rose-400{color:#f87171 !important;}
+.en-dark-theme .text-yellow-300{color:#fde047 !important;}
+.en-dark-theme .text-violet-300{color:#c4b5fd !important;}
+.en-dark-theme .ring-amber-400{--tw-ring-color:#d4af37 !important;}
+.en-dark-theme select{background:#1a1a1a !important;color:#f5f5f5 !important;border-color:#2e2e2e !important;border-radius:6px !important;}
+.en-dark-theme input[type="date"],.en-dark-theme input[type="time"],.en-dark-theme input[type="text"]{background:#1a1a1a !important;color:#f5f5f5 !important;border-radius:6px !important;}
+.en-dark-theme .accent-amber-400{accent-color:#fbbf24 !important;}
+.en-dark-theme .shadow-\[0_0_12px_rgba\(251\,191\,36\,0\.4\)\]{box-shadow:0 0 12px rgba(251,191,36,0.5) !important;}
+
+/* ── Header: uniform button height + small caps ── */
+header button,header label.cursor-pointer{height:28px !important;box-sizing:border-box !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;padding-top:0 !important;padding-bottom:0 !important;white-space:nowrap;font-variant-caps:all-small-caps;letter-spacing:0.04em;}
+header select{height:28px !important;box-sizing:border-box !important;padding-top:0 !important;padding-bottom:0 !important;line-height:28px !important;overflow:visible !important;white-space:nowrap;font-size:0.7rem !important;}
+header input[type="range"]{height:20px !important;align-self:center;}
+/* Title + subtitle small caps */
+header h1{font-variant-caps:all-small-caps;letter-spacing:0.05em;}
+header span.text-xs.text-slate-500{font-variant-caps:all-small-caps;letter-spacing:0.04em;}
+/* ── Header: always black/gold — high-specificity overrides for EN themes ── */
+.en-theme header,.en-dark-theme header,.en-theme header.bg-slate-900,.en-dark-theme header.bg-slate-900,.en-theme header.bg-slate-950,.en-dark-theme header.bg-slate-950{background:#0a0a0a !important;border-color:#d4af37 !important;}
+.en-theme header .border-slate-700,.en-dark-theme header .border-slate-700{border-color:#d4af37 !important;}
+.en-theme header .text-amber-300,.en-theme header .text-amber-200,.en-theme header .text-amber-100,
+.en-dark-theme header .text-amber-300,.en-dark-theme header .text-amber-200{color:#d4af37 !important;}
+.en-theme header .text-slate-100,.en-theme header .text-slate-200,.en-theme header .text-slate-300,
+.en-dark-theme header .text-slate-100,.en-dark-theme header .text-slate-200,.en-dark-theme header .text-slate-300{color:#f0f0f0 !important;}
+.en-theme header .text-slate-400,.en-dark-theme header .text-slate-400{color:#b0b0b0 !important;}
+.en-theme header .text-slate-500,.en-theme header .text-slate-600,
+.en-dark-theme header .text-slate-500,.en-dark-theme header .text-slate-600{color:#787878 !important;}
+.en-theme header .bg-slate-900,.en-theme header .bg-slate-800,.en-theme header .bg-slate-800\/60,
+.en-theme header .bg-slate-800\/70,.en-theme header .bg-slate-700,
+.en-dark-theme header .bg-slate-900,.en-dark-theme header .bg-slate-800,.en-dark-theme header .bg-slate-700{background:#181818 !important;}
+.en-theme header .bg-slate-950,.en-theme header .bg-slate-950\/80,
+.en-dark-theme header .bg-slate-950,.en-dark-theme header .bg-slate-950\/80{background:#0a0a0a !important;}
+.en-theme header .hover\:bg-slate-800:hover,.en-theme header .hover\:bg-slate-700:hover,
+.en-theme header .hover\:bg-slate-600:hover,
+.en-dark-theme header .hover\:bg-slate-800:hover,.en-dark-theme header .hover\:bg-slate-700:hover{background:#2c2c2c !important;}
+.en-theme header .bg-amber-500,.en-dark-theme header .bg-amber-500{background:#c9980a !important;}
+.en-theme header .hover\:bg-amber-400:hover,.en-dark-theme header .hover\:bg-amber-400:hover{background:#d4a517 !important;}
+.en-theme header .bg-rose-700,.en-dark-theme header .bg-rose-700{background:#991b1b !important;}
+.en-theme header .hover\:bg-rose-600:hover,.en-dark-theme header .hover\:bg-rose-600:hover{background:#b91c1c !important;}
+.en-theme header .bg-emerald-900\/40,.en-dark-theme header .bg-emerald-900\/40{background:#064e3b !important;}
+.en-theme header .text-emerald-400,.en-dark-theme header .text-emerald-400{color:#34d399 !important;}
+.en-theme header select,.en-dark-theme header select{background:#181818 !important;color:#f0f0f0 !important;border-color:#d4af37 !important;border-radius:4px !important;}
+.en-theme header input[type="range"],.en-dark-theme header input[type="range"]{accent-color:#d4af37 !important;}
+
+/* EN light mode: ZWDS chrome stays dark/gold */
+.en-theme .bg-slate-900\/60.border.p-2{background:#111111 !important;}
+.en-theme .bg-slate-950\/60.zwds-chrome,.en-theme .zwds-chrome.bg-slate-950\/60{background:#0a0a0a !important;}
+.en-theme .zwds-chrome,.en-theme .zwds-chrome *{color:inherit;}
+.en-theme .zwds-chrome{color:#f0f0f0 !important;}
+.en-theme .zwds-chrome.border-slate-700,.en-theme .zwds-chrome .border-slate-700{border-color:#d4af37 !important;}
+.en-theme .zwds-chrome.border-amber-400\/40,.en-theme .zwds-chrome .border-amber-400\/40{border-color:#d4af37 !important;}
+.en-theme .border-b.zwds-chrome{border-color:#d4af37 !important;}
+.en-theme .zwds-chrome .text-amber-300,.en-theme .zwds-chrome .text-amber-200,.en-theme .zwds-chrome.text-amber-300{color:#d4af37 !important;}
+.en-theme .zwds-chrome .text-slate-500,.en-theme .zwds-chrome .text-slate-400,.en-theme .zwds-chrome.text-slate-500,.en-theme .zwds-chrome.text-slate-400{color:#c0c0c0 !important;}
+.en-theme .zwds-chrome .text-slate-300,.en-theme .zwds-chrome .text-slate-200,.en-theme .zwds-chrome .text-slate-100{color:#f0f0f0 !important;}
+.en-theme .zwds-chrome .bg-slate-900,.en-theme .zwds-chrome .bg-slate-800,.en-theme .zwds-chrome .bg-slate-950{background:#181818 !important;}
+.en-theme .zwds-chrome .hover\:bg-slate-800:hover,.en-theme .zwds-chrome .hover\:bg-slate-700:hover{background:#2c2c2c !important;}
+.en-theme .zwds-chrome .bg-amber-500{background:#d4af37 !important;}
+.en-theme .zwds-chrome .hover\:bg-amber-400:hover{background:#e4c048 !important;}
+.en-theme .zwds-chrome .text-slate-900{color:#0a0a0a !important;}
+.en-theme .zwds-chrome .inline-flex.border-slate-700{border-color:#d4af37 !important;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/*!
+ * Destiny Reading Calculator
+ * Copyright © 2026 Andy Low
+ * MIT Licence — free to use, copy, and improve with attribution.
+ * This notice must be retained in all copies or derivatives.
+ */
+const { useState, useEffect, useMemo, useRef } = React;
+// Destiny Reading — 紫微斗数 + 八字 (dark theme, dual-school brightness, zoom slider)
+// DATA will be replaced at build time with contents of destiny_data.json.
+const DATA = {
+  "generated_at": "2026-04-17T07:01:09.579953Z",
+  "version": "0.1.0",
+  "people": []
+};
+
+// ---- Theme (dark/gold, matching Auspicious Date App) -----------------------
+
+const PALACE_BG_DEFAULT = "bg-slate-900/70";
+const PALACE_BG_COMMAND = "bg-amber-900/40";
+const PALACE_BG_ACCENT = "bg-slate-800/70";
+const BORDER = "border-slate-700";
+const SOFT_TEXT = "text-slate-300";
+const MID_TEXT = "text-slate-400";
+const FAINT_TEXT = "text-slate-500";
+const GOLD = "text-amber-300";
+const GOLD_BG = "bg-amber-500";
+const GOLD_BORDER = "border-amber-400/40";
+
+// ---- Language context & translations ---------------------------------------
+
+const LangContext = React.createContext("zh");
+
+// Palace name translations — Star Detectives standard
+const PALACE_NAME_EN = {
+  "命宫": "Life Palace",
+  "兄弟宫": "Siblings Palace",
+  "夫妻宫": "Partner Palace",
+  "子女宫": "Children Palace",
+  "财帛宫": "Wealth Palace",
+  "疾厄宫": "Health Palace",
+  "迁移宫": "World Palace",
+  "交友宫": "Friends Palace",
+  "仆役宫": "Friends Palace",
+  "事业宫": "Career Palace",
+  "官禄宫": "Career Palace",
+  "田宅宫": "Home Palace",
+  "福德宫": "Inner Palace",
+  "父母宫": "Parents Palace"
+};
+
+// Star name translations — Star Detectives standard
+const STAR_NAME_EN = {
+  "紫微": "The Emperor",
+  "天机": "The Strategist",
+  "太阳": "The Sun",
+  "武曲": "The General",
+  "天同": "The Benefactor",
+  "廉贞": "The Purist",
+  "天府": "The Treasury",
+  "太阴": "The Moon",
+  "贪狼": "The Wolf",
+  "巨门": "The Gate",
+  "天相": "The Minister",
+  "天梁": "The Guardian",
+  "七杀": "The Warrior",
+  "破军": "The Pioneer",
+  "左辅": "Left Aide",
+  "右弼": "Right Aide",
+  "文昌": "The Scholar",
+  "文曲": "The Artist",
+  "天魁": "Day Benefactor",
+  "天钺": "Night Benefactor",
+  "禄存": "The Abundance Star",
+  "天马": "The Horse",
+  "擎羊": "The Ram",
+  "陀罗": "The Millstone",
+  "火星": "Fire Star",
+  "铃星": "Bell Star",
+  "地空": "The Void",
+  "地劫": "The Drain",
+  "天空": "Sky Void",
+  "旬空": "Decade Void",
+  "截空": "Cut Void",
+  "天福": "Fortune Star",
+  "天寿": "Longevity Star",
+  "天才": "Talent Star",
+  "天厨": "Nourishment",
+  "红鸾": "Red Phoenix",
+  "天喜": "Joy Star",
+  "天官": "Officer Star",
+  "天巫": "The Shaman",
+  "天月": "Moon Star",
+  "天虚": "Empty Star",
+  "天哭": "Weeping Star",
+  "龙池": "Dragon Pool",
+  "凤阁": "Phoenix Pavilion",
+  "孤辰": "Lone Star",
+  "寡宿": "Widow Star",
+  "破碎": "Shattered Star",
+  "大耗": "Great Drain",
+  "天德": "Virtue Star",
+  "月德": "Moon Virtue",
+  "解神": "The Releaser",
+  "天姚": "The Charmer",
+  "天刑": "The Punisher",
+  "阴煞": "The Shadow",
+  "天煞": "Sky Demon",
+  "咸池": "Salt Lake",
+  "指背": "Pointed Finger",
+  "恩光": "Favour",
+  "博士": "Scholar Star",
+  "力士": "Strength",
+  "青龙": "Blue Dragon",
+  "小耗": "Minor Drain",
+  "将军": "General Star",
+  "奏书": "Scribe",
+  "飞廉": "Swift Wind",
+  "喜神": "Joy God",
+  "病符": "Illness Sign",
+  "伏兵": "Hidden Troop",
+  "官府": "Authority",
+  "华盖": "Canopy Star",
+  "劫煞": "Harm Demon",
+  "灾煞": "Disaster Demon",
+  "月煞": "Moon Demon",
+  "八座": "Eight Thrones",
+  "三台": "Three Platforms",
+  "吊客": "Mourning Guest",
+  "白虎": "White Tiger",
+  "岁建": "Year Builder",
+  "台辅": "The Pedestal",
+  "天伤": "Sky Wound",
+  "天使": "Sky Envoy",
+  "天贵": "Sky Noble",
+  "封诰": "The Decree",
+  "年解": "Annual Relief",
+  "截路": "Blocked Path",
+  "空亡": "Emptiness",
+  "蜚廉": "The Gossip",
+  "亡神": "The Lost",
+  "将星": "Commander",
+  "岁驿": "Year Relay",
+  "息神": "Resting Spirit",
+  "攀鞍": "Ascension",
+  "丧门": "Mourning Gate",
+  "官符": "Legal Sign",
+  "晦气": "Murky Luck",
+  "贯索": "The Chain",
+  "龙德": "Dragon Virtue"
+};
+
+// Changsheng 12 life stage translations
+const CHANGSHENG_EN = {
+  "长生": "Birth",
+  "沐浴": "Bathing",
+  "冠带": "Adornment",
+  "临官": "Authority",
+  "帝旺": "Peak Power",
+  "衰": "Decline",
+  "病": "Illness",
+  "死": "Death",
+  "墓": "Tomb",
+  "绝": "Extinction",
+  "胎": "Conception",
+  "养": "Nurturing"
+};
+
+// Brightness translations
+const BRIGHT_EN = {
+  "庙": "Brilliant",
+  "旺": "Radiant",
+  "利": "Favoured",
+  "得": "Steady",
+  "平": "Moderate",
+  "陷": "Dimmed",
+  "不": "Dimmed",
+  "闲": "Moderate"
+};
+
+// Mutagen translations
+const MUTAGEN_EN = {
+  "禄": "Blessing",
+  "权": "Power",
+  "科": "Grace",
+  "忌": "Conflict"
+};
+
+// Element, Yin/Yang, Branch-animal translations
+const ELEMENT_EN_MAP = {"木":"Wood","火":"Fire","土":"Earth","金":"Metal","水":"Water"};
+const YINYANG_EN_MAP = {"阴":"Yin","阳":"Yang"};
+const BRANCH_ANIMAL_EN = {"子":"Rat","丑":"Ox","寅":"Tiger","卯":"Rabbit","辰":"Dragon","巳":"Snake","午":"Horse","未":"Goat","申":"Monkey","酉":"Rooster","戌":"Dog","亥":"Pig"};
+const ZODIAC_ZH_EN = {"鼠":"Rat","牛":"Ox","虎":"Tiger","兔":"Rabbit","龙":"Dragon","蛇":"Snake","马":"Horse","羊":"Goat","猴":"Monkey","鸡":"Rooster","狗":"Dog","猪":"Pig"};
+const SIGN_ZH_EN = {"白羊座":"Aries","金牛座":"Taurus","双子座":"Gemini","巨蟹座":"Cancer","狮子座":"Leo","处女座":"Virgo","天秤座":"Libra","天蝎座":"Scorpio","射手座":"Sagittarius","摩羯座":"Capricorn","水瓶座":"Aquarius","双鱼座":"Pisces"};
+const FIVE_CLASS_EN = {"水二局":"Water Formation No: 2","木三局":"Wood Formation No: 3","金四局":"Metal Formation No: 4","土五局":"Earth Formation No: 5","火六局":"Fire Formation No: 6"};
+const TEN_GOD_EN_MAP = {"比肩":"Peer","劫财":"Rob Wealth","食神":"Eating God","伤官":"Hurting Officer","偏财":"Indirect Wealth","正财":"Direct Wealth","七杀":"Seven Killing","正官":"Direct Officer","偏印":"Indirect Resource","正印":"Direct Resource","日主":"Day Master"};
+const PILLAR_LABEL_EN = {"年柱":"Year","月柱":"Month","日柱":"Day","时柱":"Hour"};
+
+// Ganzhi English descriptor: "Yin Fire Snake"
+function ganzhiDesc(stem, branch) {
+  const yy = YINYANG_EN_MAP[STEM_YY[stem]] || "";
+  const el = ELEMENT_EN_MAP[STEM_EL[stem]] || "";
+  const animal = BRANCH_ANIMAL_EN[branch] || "";
+  return yy + " " + el + " " + animal;
+}
+
+// ---- Constants -------------------------------------------------------------
+
+const WUXING_JU_PREFIX = {
+  "水": "润下",
+  "火": "炎上",
+  "木": "曲直",
+  "金": "从革",
+  "土": "稼穑"
+};
+function longFiveElementsName(short) {
+  if (!short) return "";
+  const m = short.match(/([水火木金土])/);
+  if (!m) return short;
+  return (WUXING_JU_PREFIX[m[1]] || "") + short;
+}
+const STEM_EL = {
+  甲: "木",
+  乙: "木",
+  丙: "火",
+  丁: "火",
+  戊: "土",
+  己: "土",
+  庚: "金",
+  辛: "金",
+  壬: "水",
+  癸: "水"
+};
+const BR_EL = {
+  子: "水",
+  丑: "土",
+  寅: "木",
+  卯: "木",
+  辰: "土",
+  巳: "火",
+  午: "火",
+  未: "土",
+  申: "金",
+  酉: "金",
+  戌: "土",
+  亥: "水"
+};
+const STEM_YY = {
+  甲: "阳",
+  乙: "阴",
+  丙: "阳",
+  丁: "阴",
+  戊: "阳",
+  己: "阴",
+  庚: "阳",
+  辛: "阴",
+  壬: "阳",
+  癸: "阴"
+};
+const EL_COLOR = {
+  木: "text-emerald-400",
+  火: "text-rose-400",
+  土: "text-amber-300",
+  金: "text-yellow-200",
+  水: "text-sky-400"
+};
+const EL_BG = {
+  木: "bg-emerald-950/50",
+  火: "bg-rose-950/50",
+  土: "bg-amber-950/50",
+  金: "bg-yellow-950/50",
+  水: "bg-sky-950/50"
+};
+const BR_HIDDEN_STEM = {
+  子: "癸",
+  丑: "己",
+  寅: "甲",
+  卯: "乙",
+  辰: "戊",
+  巳: "丙",
+  午: "丁",
+  未: "己",
+  申: "庚",
+  酉: "辛",
+  戌: "戊",
+  亥: "壬"
+};
+// All hidden stems per branch — main stem at index 1 for 3-stem branches (centre display)
+const BR_ALL_HIDDEN_STEMS = {
+  "子": ["癸"],
+  "丑": ["癸", "己", "辛"],
+  "寅": ["戊", "甲", "丙"],
+  "卯": ["乙"],
+  "辰": ["乙", "戊", "癸"],
+  "巳": ["庚", "丙", "戊"],
+  "午": ["丁", "己"],
+  "未": ["丁", "己", "乙"],
+  "申": ["壬", "庚", "戊"],
+  "酉": ["辛"],
+  "戌": ["辛", "戊", "丁"],
+  "亥": ["壬", "甲"]
+};
+const MUTAGEN_COLOR = {
+  "禄": "text-emerald-400",
+  "权": "text-sky-400",
+  "科": "text-amber-300",
+  "忌": "text-rose-400"
+};
+
+// ---- Helpers ---------------------------------------------------------------
+
+function tenGod(dayStem, otherStem) {
+  if (!dayStem || !otherStem || !STEM_EL[otherStem]) return "";
+  const de = STEM_EL[dayStem],
+    oe = STEM_EL[otherStem];
+  const same = STEM_YY[dayStem] === STEM_YY[otherStem];
+  const GEN = {
+    木: "火",
+    火: "土",
+    土: "金",
+    金: "水",
+    水: "木"
+  };
+  const KE = {
+    木: "土",
+    土: "水",
+    水: "火",
+    火: "金",
+    金: "木"
+  };
+  if (de === oe) return same ? "比肩" : "劫财";
+  if (GEN[de] === oe) return same ? "食神" : "伤官";
+  if (KE[de] === oe) return same ? "偏财" : "正财";
+  if (KE[oe] === de) return same ? "七杀" : "正官";
+  if (GEN[oe] === de) return same ? "偏印" : "正印";
+  return "";
+}
+function yinYangGender(gender, yearStem) {
+  return (STEM_YY[yearStem] || "阳") + gender;
+}
+function collectMutagens(palaces) {
+  const out = [];
+  palaces.forEach(p => {
+    [...(p.major_stars || []), ...(p.minor_stars || [])].forEach(s => {
+      if (s.mutagen) out.push({
+        star: s.name,
+        mutagen: s.mutagen,
+        branch: p.earthly_branch
+      });
+    });
+  });
+  const order = {
+    禄: 0,
+    权: 1,
+    科: 2,
+    忌: 3
+  };
+  out.sort((a, b) => order[a.mutagen] - order[b.mutagen]);
+  return out;
+}
+
+// ---- Export helpers --------------------------------------------------------
+
+const EXPORT_PALACE_ORDER = ["命宫", "父母宫", "福德宫", "田宅宫", "事业宫", "交友宫", "迁移宫", "疾厄宫", "财帛宫", "子女宫", "夫妻宫", "兄弟宫"];
+const PALACE_NAME_ALIASES = {
+  "官禄宫": "事业宫",
+  "仆役宫": "交友宫"
+};
+function normalisePalaceName(n) {
+  return PALACE_NAME_ALIASES[n] || n;
+}
+function palaceByName(palaces, name) {
+  return palaces.find(p => normalisePalaceName(p.name) === name);
+}
+function hourRangeStr(timeStr) {
+  if (!timeStr) return "";
+  const h = parseInt(String(timeStr).split(":")[0], 10);
+  if (isNaN(h)) return "";
+  let start, end;
+  if (h === 23 || h === 0) {
+    start = 23;
+    end = 1;
+  } else {
+    const block = Math.floor((h + 1) / 2);
+    start = block * 2 - 1;
+    end = block * 2 + 1;
+  }
+  const fmt = x => String((x % 24 + 24) % 24).padStart(2, "0") + ":00";
+  return "(" + fmt(start) + "-" + fmt(end) + ")";
+}
+function dobDDMMYYYY(dob) {
+  if (!dob) return "";
+  const m = String(dob).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? m[3] + "/" + m[2] + "/" + m[1] : dob;
+}
+function baziStr(bz) {
+  if (!bz || !bz.pillars) return "";
+  const p = bz.pillars;
+  return p.year.stem + p.year.branch + p.month.stem + p.month.branch + p.day.stem + p.day.branch + p.hour.stem + p.hour.branch;
+}
+function starWithMark(s, school) {
+  const b = school === "sanhe" && s.brightness_sanhe ? s.brightness_sanhe : s.brightness || "";
+  const mut = s.mutagen ? "化" + s.mutagen : "";
+  return s.name + b + mut;
+}
+function palaceLine(p, school) {
+  if (!p) return "";
+  const baseName = normalisePalaceName(p.name);
+  const title = p.is_body_palace ? baseName + "/身宫" : baseName;
+  const majors = (p.major_stars || []).map(s => starWithMark(s, school));
+  const minors = (p.minor_stars || []).map(s => starWithMark(s, school));
+  const adjs = (p.adjective_stars || []).map(s => s.name);
+  const stages = [p.changsheng12, p.boshi12].filter(Boolean);
+  const parts = [];
+  if (majors.length) parts.push(majors.join("，"));
+  if (minors.length) parts.push(minors.join("，"));
+  const tail = [...adjs, ...stages];
+  if (tail.length) parts.push(tail.join(","));
+  return title + "（" + p.heavenly_stem + p.earthly_branch + "）：" + parts.join("，");
+}
+function buildExportText(person, school) {
+  if (!person) return "";
+  const z = person.zwds || {};
+  const palaces = z.palaces || [];
+  const out = [];
+  out.push("");
+  out.push("Name: " + (person.name || ""));
+  out.push("Gender: " + (person.gender === "女" ? "女 Female" : "男 Male"));
+  out.push("Date of Birth: " + dobDDMMYYYY(person.dob));
+  out.push("Hour of Birth: " + hourRangeStr(person.time));
+  out.push("八字: " + baziStr(person.bazi));
+  const bz = person.bazi || {};
+  if (bz.start_age != null) {
+    out.push("起运：" + bz.start_age + "岁" + (bz.start_month ? bz.start_month + "个月" : "") + (bz.start_day ? bz.start_day + "天" : ""));
+  }
+  if (bz.da_yun && bz.da_yun.length) {
+    out.push("大运 · 10-year cycles:");
+    bz.da_yun.forEach(d => {
+      const ages = d.start_age + "–" + d.end_age + "岁";
+      const years = d.start_year + "–" + d.end_year;
+      const tg = d.ten_god ? "（" + d.ten_god + "）" : "";
+      out.push("  " + d.ganzhi + tg + "  " + ages + "  " + years);
+    });
+  }
+  out.push("紫微斗数：");
+  out.push("");
+  const soul = z.soul || "";
+  const body = z.body || "";
+  const fe = z.five_elements_class || "";
+  out.push("命主：" + soul + "　身主：" + body + (fe ? "　五行局：" + fe : ""));
+  const muts = collectMutagens(palaces);
+  if (muts.length) {
+    out.push("生年四化：" + muts.map(m => m.star + "化" + m.mutagen).join("，"));
+  }
+  const schoolLabel = school === "sanhe" ? "三合派·《紫微斗数全书》" : "中州派·iztro";
+  out.push("亮度学派：" + schoolLabel);
+  if (person.day_night && person.day_night.note) out.push("日夜星辉：" + person.day_night.note);
+  out.push("");
+  EXPORT_PALACE_ORDER.forEach(pname => {
+    const pl = palaceByName(palaces, pname);
+    if (pl) out.push(palaceLine(pl, school));
+  });
+  return out.join("\n");
+}
+function downloadText(filename, text) {
+  try {
+    const blob = new Blob([text], {
+      type: "text/plain;charset=utf-8"
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (e) {
+    console.error("Export failed:", e);
+  }
+}
+
+// ---- Client-side chart computation (iztro + lunar-javascript) -------------
+// These helpers let the "+ 新增 Add" form compute the full chart in-browser,
+// so the user never has to run destiny_engine.py for everyday registrations.
+
+// 三合派 brightness table (14-主星 × 12-地支) — ported from destiny_engine.py.
+const SAN_HE_BRIGHTNESS = {
+  "紫微": {
+    "子": "平",
+    "丑": "庙",
+    "寅": "庙",
+    "卯": "旺",
+    "辰": "陷",
+    "巳": "旺",
+    "午": "庙",
+    "未": "庙",
+    "申": "旺",
+    "酉": "平",
+    "戌": "陷",
+    "亥": "旺"
+  },
+  "天机": {
+    "子": "庙",
+    "丑": "陷",
+    "寅": "旺",
+    "卯": "庙",
+    "辰": "利",
+    "巳": "平",
+    "午": "庙",
+    "未": "陷",
+    "申": "旺",
+    "酉": "庙",
+    "戌": "利",
+    "亥": "平"
+  },
+  "太阳": {
+    "子": "陷",
+    "丑": "不",
+    "寅": "旺",
+    "卯": "庙",
+    "辰": "旺",
+    "巳": "旺",
+    "午": "庙",
+    "未": "得",
+    "申": "得",
+    "酉": "平",
+    "戌": "陷",
+    "亥": "陷"
+  },
+  "武曲": {
+    "子": "旺",
+    "丑": "庙",
+    "寅": "得",
+    "卯": "利",
+    "辰": "庙",
+    "巳": "平",
+    "午": "旺",
+    "未": "庙",
+    "申": "得",
+    "酉": "利",
+    "戌": "庙",
+    "亥": "平"
+  },
+  "天同": {
+    "子": "旺",
+    "丑": "不",
+    "寅": "利",
+    "卯": "平",
+    "辰": "平",
+    "巳": "庙",
+    "午": "陷",
+    "未": "不",
+    "申": "旺",
+    "酉": "利",
+    "戌": "平",
+    "亥": "庙"
+  },
+  "廉贞": {
+    "子": "平",
+    "丑": "利",
+    "寅": "庙",
+    "卯": "平",
+    "辰": "利",
+    "巳": "陷",
+    "午": "平",
+    "未": "利",
+    "申": "庙",
+    "酉": "平",
+    "戌": "利",
+    "亥": "陷"
+  },
+  "天府": {
+    "子": "得",
+    "丑": "庙",
+    "寅": "庙",
+    "卯": "得",
+    "辰": "庙",
+    "巳": "得",
+    "午": "得",
+    "未": "庙",
+    "申": "得",
+    "酉": "得",
+    "戌": "庙",
+    "亥": "得"
+  },
+  "太阴": {
+    "子": "庙",
+    "丑": "庙",
+    "寅": "闲",
+    "卯": "陷",
+    "辰": "陷",
+    "巳": "陷",
+    "午": "陷",
+    "未": "不",
+    "申": "利",
+    "酉": "旺",
+    "戌": "旺",
+    "亥": "庙"
+  },
+  "贪狼": {
+    "子": "旺",
+    "丑": "庙",
+    "寅": "平",
+    "卯": "利",
+    "辰": "庙",
+    "巳": "陷",
+    "午": "旺",
+    "未": "庙",
+    "申": "平",
+    "酉": "利",
+    "戌": "庙",
+    "亥": "陷"
+  },
+  "巨门": {
+    "子": "旺",
+    "丑": "陷",
+    "寅": "庙",
+    "卯": "庙",
+    "辰": "平",
+    "巳": "旺",
+    "午": "旺",
+    "未": "陷",
+    "申": "庙",
+    "酉": "庙",
+    "戌": "平",
+    "亥": "旺"
+  },
+  "天相": {
+    "子": "庙",
+    "丑": "庙",
+    "寅": "庙",
+    "卯": "陷",
+    "辰": "得",
+    "巳": "平",
+    "午": "庙",
+    "未": "庙",
+    "申": "庙",
+    "酉": "陷",
+    "戌": "得",
+    "亥": "平"
+  },
+  "天梁": {
+    "子": "庙",
+    "丑": "旺",
+    "寅": "庙",
+    "卯": "庙",
+    "辰": "庙",
+    "巳": "陷",
+    "午": "庙",
+    "未": "旺",
+    "申": "陷",
+    "酉": "得",
+    "戌": "庙",
+    "亥": "陷"
+  },
+  "七杀": {
+    "子": "旺",
+    "丑": "庙",
+    "寅": "庙",
+    "卯": "陷",
+    "辰": "庙",
+    "巳": "平",
+    "午": "旺",
+    "未": "庙",
+    "申": "庙",
+    "酉": "陷",
+    "戌": "庙",
+    "亥": "平"
+  },
+  "破军": {
+    "子": "庙",
+    "丑": "旺",
+    "寅": "陷",
+    "卯": "旺",
+    "辰": "旺",
+    "巳": "平",
+    "午": "庙",
+    "未": "旺",
+    "申": "陷",
+    "酉": "旺",
+    "戌": "旺",
+    "亥": "平"
+  }
+};
+function sanheBrightness(starName, branchZh) {
+  const row = SAN_HE_BRIGHTNESS[starName];
+  return row && row[branchZh] || "";
+}
+
+// 太阳/太阴 day-night modifier — ported from destiny_engine.py.
+function sunMoonDayNight(hour) {
+  const isDay = hour >= 5 && hour < 17;
+  const sunPeak = hour >= 11 && hour < 13;
+  const moonPeak = hour >= 23 || hour < 1;
+  const sunState = isDay ? sunPeak ? "增辉·峰" : "增辉" : "失辉";
+  const moonState = isDay ? "失辉" : moonPeak ? "增辉·峰" : "增辉";
+  const period = isDay ? "日" : "夜";
+  const strong = isDay ? "太阳" : "太阴";
+  const weak = isDay ? "太阴" : "太阳";
+  const hh = String(hour).padStart(2, "0");
+  return {
+    hour,
+    period,
+    sun_state: sunState,
+    moon_state: moonState,
+    note: "生于" + period + "间（" + hh + "时），" + strong + "增辉，" + weak + "失辉。"
+  };
+}
+
+// Five-element 生/克 maps for ten-god lookup (only used for 大运 star).
+const ELEMENT_GEN_JS = {
+  木: "火",
+  火: "土",
+  土: "金",
+  金: "水",
+  水: "木"
+};
+const ELEMENT_KE_JS = {
+  木: "土",
+  火: "金",
+  土: "水",
+  金: "木",
+  水: "火"
+};
+function tenGodJS(dayStem, otherStem) {
+  if (!dayStem || !otherStem || !STEM_EL[otherStem]) return "";
+  const de = STEM_EL[dayStem],
+    oe = STEM_EL[otherStem];
+  const same = STEM_YY[dayStem] === STEM_YY[otherStem];
+  if (de === oe) return same ? "比肩" : "劫财";
+  if (ELEMENT_GEN_JS[de] === oe) return same ? "食神" : "伤官";
+  if (ELEMENT_KE_JS[de] === oe) return same ? "偏财" : "正财";
+  if (ELEMENT_KE_JS[oe] === de) return same ? "七杀" : "正官";
+  if (ELEMENT_GEN_JS[oe] === de) return same ? "偏印" : "正印";
+  return "";
+}
+
+// iztro time-index convention:
+//   0 早子时 00:00-01:00, 1 丑, 2 寅, … 11 亥 21:00-23:00, 12 晚子时 23:00-24:00
+function hhmmToTimeIndex(hhmm) {
+  const [hhS, mmS] = String(hhmm || "12:00").split(":");
+  const h = parseInt(hhS, 10) + (parseInt(mmS, 10) || 0) / 60;
+  if (h < 1) return 0;
+  if (h >= 23) return 12;
+  return Math.floor((h + 1) / 2);
+}
+function genderToZh(g) {
+  const s = String(g || "").toLowerCase().trim();
+  if (s === "m" || s === "男" || s === "male") return "男";
+  if (s === "f" || s === "女" || s === "female") return "女";
+  return "男";
+}
+
+// Convert iztro's camelCase palace to our snake_case shape + add brightness_sanhe.
+function normalisePalaceName_Client(n) {
+  // iztro returns short names like "命宫", "父母", "福德"; make sure they end with 宫.
+  if (!n) return n;
+  return n.endsWith("宫") ? n : n + "宫";
+}
+function convertIztroPalace(p) {
+  const branchZh = p.earthlyBranch;
+  const majors = (p.majorStars || []).map(s => {
+    const o = Object.assign({}, s);
+    o.brightness_sanhe = sanheBrightness(s.name, branchZh);
+    return o;
+  });
+  return {
+    index: p.index,
+    name: normalisePalaceName_Client(p.name),
+    heavenly_stem: p.heavenlyStem,
+    earthly_branch: branchZh,
+    is_body_palace: !!p.isBodyPalace,
+    is_original_palace: !!p.isOriginalPalace,
+    major_stars: majors,
+    minor_stars: (p.minorStars || []).map(s => Object.assign({}, s)),
+    adjective_stars: (p.adjectiveStars || []).map(s => Object.assign({}, s)),
+    changsheng12: p.changsheng12 || "",
+    boshi12: p.boshi12 || "",
+    jiangqian12: p.jiangqian12 || "",
+    suiqian12: p.suiqian12 || "",
+    decadal: p.decadal ? {
+      range: [p.decadal.range[0], p.decadal.range[1]],
+      heavenly_stem: p.decadal.heavenlyStem,
+      earthly_branch: p.decadal.earthlyBranch
+    } : null,
+    ages: (p.ages || []).slice()
+  };
+}
+
+// iztro v2.5.4 does not expose astro.config(), so dayDivide:'forward' (default) would
+// advance 晚子时 (timeIndex=12, 23:00-23:59) to the next solar day, shifting the entire
+// palace layout. Fix: remap timeIndex 12 → 0 for the iztro call only. Both are 子时
+// (same earthly branch), so the 命宫 placement is identical, but index 0 never triggers
+// iztro's day-advance logic. The original timeIndex is preserved for bazi/other uses.
+function iztroSafeTimeIndex(timeIndex) {
+  return timeIndex === 12 ? 0 : timeIndex;
+}
+function buildZwdsClient(dob, timeIndex, genderZh) {
+  if (!window.iztro || !window.iztro.astro) throw new Error("iztro library not loaded — check your internet connection.");
+  const a = window.iztro.astro.bySolar(dob, iztroSafeTimeIndex(timeIndex), genderZh, true, "zh-CN");
+  return {
+    sign: a.sign,
+    zodiac: a.zodiac,
+    soul: a.soul,
+    body: a.body,
+    five_elements_class: a.fiveElementsClass,
+    soul_palace_branch: a.earthlyBranchOfSoulPalace,
+    body_palace_branch: a.earthlyBranchOfBodyPalace,
+    palaces: (a.palaces || []).map(convertIztroPalace)
+  };
+}
+function buildBirthInfoClient(dob, time, genderZh, baziPillars) {
+  const a = window.iztro.astro.bySolar(dob, iztroSafeTimeIndex(hhmmToTimeIndex(time)), genderZh, true, "zh-CN");
+  // Prefer the lunar-javascript-derived pillars so 晚子时 (23:00-23:59) displays the
+  // current-day Bazi (e.g. 壬子 壬子) instead of iztro's next-day 甲子 rendering.
+  const chineseDate = baziPillars ? [baziPillars.year.stem + baziPillars.year.branch, baziPillars.month.stem + baziPillars.month.branch, baziPillars.day.stem + baziPillars.day.branch, baziPillars.hour.stem + baziPillars.hour.branch].join(" ") : a.chineseDate;
+  return {
+    solar: dob + " " + time,
+    lunar: a.lunarDate,
+    chinese_date: chineseDate,
+    time_branch: a.time,
+    time_range: a.timeRange,
+    sign: a.sign,
+    zodiac: a.zodiac,
+    gender: genderZh
+  };
+}
+function buildBaziClient(y, m, d, hh, mm, genderZh) {
+  if (!window.Solar) throw new Error("lunar-javascript library not loaded — check your internet connection.");
+  const solar = window.Solar.fromYmdHms(y, m, d, hh, mm, 0);
+  const ec = solar.getLunar().getEightChar();
+  const pillar = (gz, nayin) => ({
+    stem: gz[0],
+    branch: gz[1],
+    stem_element: STEM_EL[gz[0]] || "",
+    branch_element: {
+      子: "水",
+      丑: "土",
+      寅: "木",
+      卯: "木",
+      辰: "土",
+      巳: "火",
+      午: "火",
+      未: "土",
+      申: "金",
+      酉: "金",
+      戌: "土",
+      亥: "水"
+    }[gz[1]] || "",
+    nayin: nayin
+  });
+  const y_gz = ec.getYear(),
+    m_gz = ec.getMonth(),
+    d_gz = ec.getDay(),
+    h_gz = ec.getTime();
+  const pillars = {
+    year: pillar(y_gz, ec.getYearNaYin()),
+    month: pillar(m_gz, ec.getMonthNaYin()),
+    day: pillar(d_gz, ec.getDayNaYin()),
+    hour: pillar(h_gz, ec.getTimeNaYin())
+  };
+  const dayStem = d_gz[0];
+  const yun_gender = genderZh === "男" ? 1 : 0;
+  const yun = ec.getYun(yun_gender);
+  const da_yun_list = (yun.getDaYun() || []).map(r => {
+    const gz = r.getGanZhi() || "";
+    return {
+      start_age: r.getStartAge(),
+      end_age: r.getEndAge(),
+      start_year: r.getStartYear(),
+      end_year: r.getEndYear(),
+      ganzhi: gz,
+      ten_god: gz ? tenGodJS(dayStem, gz[0]) : ""
+    };
+  });
+  const tally = {
+    木: 0,
+    火: 0,
+    土: 0,
+    金: 0,
+    水: 0
+  };
+  ["year", "month", "day", "hour"].forEach(k => {
+    const p = pillars[k];
+    if (p.stem_element) tally[p.stem_element] += 1;
+    if (p.branch_element) tally[p.branch_element] += 1;
+  });
+  return {
+    pillars,
+    day_master: dayStem,
+    day_master_element: STEM_EL[dayStem] || "",
+    day_master_yin_yang: STEM_YY[dayStem] || "阳",
+    ten_gods: {
+      year_stem: tenGodJS(dayStem, y_gz[0]),
+      month_stem: tenGodJS(dayStem, m_gz[0]),
+      day_stem: "日主",
+      hour_stem: tenGodJS(dayStem, h_gz[0])
+    },
+    five_elements_tally: tally,
+    start_age: yun.getStartYear(),
+    start_month: yun.getStartMonth(),
+    start_day: yun.getStartDay(),
+    da_yun: da_yun_list
+  };
+}
+function computePerson(form) {
+  const name = (form.name || "").trim() || "Unnamed";
+  const genderZh = genderToZh(form.gender);
+  const dob = form.dob;
+  const time = form.time || "12:00";
+  if (!dob) throw new Error("Please enter a date of birth (出生日).");
+  const [yS, mS, dS] = dob.split("-");
+  const y = parseInt(yS, 10),
+    m = parseInt(mS, 10),
+    d = parseInt(dS, 10);
+  if (!y || !m || !d) throw new Error("Invalid date of birth — expected YYYY-MM-DD.");
+  const [hhS, mmS] = time.split(":");
+  const hh = parseInt(hhS, 10),
+    mm = parseInt(mmS, 10) || 0;
+  const timeIndex = hhmmToTimeIndex(time);
+  const bazi = buildBaziClient(y, m, d, hh, mm, genderZh);
+  return {
+    id: (form.id || name + "_" + dob + "_" + time).replace(/\s+/g, "_"),
+    name,
+    gender: genderZh,
+    dob,
+    time,
+    birth: buildBirthInfoClient(dob, time, genderZh, bazi.pillars),
+    day_night: sunMoonDayNight(hh),
+    brightness_schools: {
+      zhongzhou: {
+        label: "中州派 (iztro)",
+        source: "王亭之 Zhong-Zhou lineage — iztro's native brightness",
+        interpretation_note: "搭配中州派星曜解读"
+      },
+      sanhe: {
+        label: "三合派 (全书)",
+        source: "《紫微斗数全书》主流三合派亮度表",
+        interpretation_note: "搭配三合派星曜解读"
+      }
+    },
+    zwds: buildZwdsClient(dob, timeIndex, genderZh),
+    bazi
+  };
+}
+
+// localStorage persistence + JSON import/export ------------------------------
+// v2: store only raw inputs {id,name,gender,dob,time} — chart is always
+// recomputed on load so engine fixes apply automatically to all saved people.
+const LS_KEY = "destiny_reading_people_v2";
+const LS_KEY_V1 = "destiny_reading_people_v1"; // legacy key, migrated on first load
+
+function rawInputs(p) {
+  return {
+    id: p.id,
+    name: p.name,
+    gender: p.gender,
+    dob: p.dob,
+    time: p.time
+  };
+}
+function recomputeFromRaw(raw) {
+  try {
+    return computePerson({
+      name: raw.name,
+      gender: raw.gender,
+      dob: raw.dob,
+      time: raw.time,
+      id: raw.id
+    });
+  } catch (e) {
+    return null;
+  }
+}
+function loadPeopleFromStorage() {
+  try {
+    // Try v2 first; fall back to v1 for migration
+    let stored = window.localStorage.getItem(LS_KEY);
+    if (!stored) stored = window.localStorage.getItem(LS_KEY_V1);
+    if (!stored) return null;
+    const arr = JSON.parse(stored);
+    if (!Array.isArray(arr)) return null;
+    // Recompute every stored person with the current engine
+    return arr.map(recomputeFromRaw).filter(Boolean);
+  } catch (e) {
+    return null;
+  }
+}
+function savePeopleToStorage(list) {
+  try {
+    // Save only raw inputs so future engine fixes apply on next load
+    window.localStorage.setItem(LS_KEY, JSON.stringify(list.map(rawInputs)));
+  } catch (e) {
+    console.warn("Could not save to localStorage:", e);
+  }
+}
+function mergePeople(seed, saved) {
+  if (!saved || saved.length === 0) return seed;
+  const bySeed = new Map(seed.map(p => [p.id, p]));
+  const out = seed.slice();
+  saved.forEach(p => {
+    if (!p || !p.id) return;
+    if (bySeed.has(p.id)) {
+      // localStorage wins for duplicates (freshest edit)
+      const idx = out.findIndex(x => x.id === p.id);
+      if (idx >= 0) out[idx] = p;
+    } else {
+      out.push(p);
+    }
+  });
+  return out;
+}
+
+// File System Access API + IndexedDB — persistent JSON file storage ----------
+const FILE_API_SUPPORTED = typeof window !== "undefined" && "showOpenFilePicker" in window;
+const IDB_DB = "destiny_reading_db";
+const IDB_STORE_NAME = "handles";
+const IDB_KEY = "people_file";
+function idbOpen() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(IDB_DB, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE_NAME);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+async function idbGetHandle() {
+  try {
+    const db = await idbOpen();
+    return new Promise(res => {
+      const r = db.transaction(IDB_STORE_NAME, "readonly").objectStore(IDB_STORE_NAME).get(IDB_KEY);
+      r.onsuccess = () => res(r.result || null);
+      r.onerror = () => res(null);
+    });
+  } catch (e) {
+    return null;
+  }
+}
+async function idbSetHandle(handle) {
+  try {
+    const db = await idbOpen();
+    await new Promise(res => {
+      const tx = db.transaction(IDB_STORE_NAME, "readwrite");
+      tx.objectStore(IDB_STORE_NAME).put(handle, IDB_KEY);
+      tx.oncomplete = res;
+      tx.onerror = res;
+    });
+  } catch (e) {}
+}
+async function ensureFilePermission(handle) {
+  try {
+    let p = await handle.queryPermission({
+      mode: "readwrite"
+    });
+    if (p === "granted") return true;
+    p = await handle.requestPermission({
+      mode: "readwrite"
+    });
+    return p === "granted";
+  } catch (e) {
+    return false;
+  }
+}
+async function readPeopleFile(handle) {
+  try {
+    const file = await handle.getFile();
+    const text = await file.text();
+    if (!text.trim()) return [];
+    const arr = JSON.parse(text);
+    return Array.isArray(arr) ? arr.map(recomputeFromRaw).filter(Boolean) : [];
+  } catch (e) {
+    return null;
+  }
+}
+async function writePeopleFile(handle, list) {
+  try {
+    const w = await handle.createWritable();
+    await w.write(JSON.stringify(list.map(rawInputs), null, 2));
+    await w.close();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+async function pickFile() {
+  const opts = {
+    types: [{
+      description: "JSON people file",
+      accept: {
+        "application/json": [".json"]
+      }
+    }],
+    suggestedName: "destiny_people.json"
+  };
+  try {
+    const [h] = await window.showOpenFilePicker(opts);
+    return h;
+  } catch (e) {
+    if (e.name === "AbortError") return null;
+    try {
+      return await window.showSaveFilePicker(opts);
+    } catch (e2) {
+      return null;
+    }
+  }
+}
+function downloadJSON(filename, obj) {
+  try {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], {
+      type: "application/json;charset=utf-8"
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (e) {
+    console.error("Download failed:", e);
+  }
+}
+
+// ---- Star ------------------------------------------------------------------
+
+function luminaryBadge(starName, dayNight, lang) {
+  if (!dayNight) return null;
+  const state = starName === "太阳" ? dayNight.sun_state : starName === "太阴" ? dayNight.moon_state : null;
+  if (!state) return null;
+  const isBoost = state.indexOf("增") === 0;
+  const isPeak = state.indexOf("峰") >= 0;
+  const cls = isBoost ? isPeak ? "text-emerald-300 font-bold" : "text-emerald-400" : "text-slate-500";
+  let label, glyph;
+  if (lang === "en") {
+    label = isBoost ? isPeak ? "☀ Peak" : "☀ Bright" : "☾ Dim";
+    glyph = starName === "太阴" ? isBoost ? isPeak ? "☾ Peak" : "☾ Bright" : "☀ Dim" : label;
+  } else {
+    label = isBoost ? isPeak ? "☀增辉峰" : "☀增辉" : "☾失辉";
+    glyph = starName === "太阴" ? isBoost ? isPeak ? "☾增辉峰" : "☾增辉" : "☀失辉" : label;
+  }
+  return /*#__PURE__*/React.createElement("span", {
+    className: "ml-0.5 text-[9px] " + cls,
+    title: state
+  }, glyph);
+}
+function Star({
+  s,
+  small = false,
+  school = "sanhe",
+  dayNight = null
+}) {
+  const lang = React.useContext(LangContext);
+  const sz = small ? "text-[11px]" : "text-xs";
+  // Brightness lookup by school. Fall back to iztro's native (Zhong-Zhou) if no
+  // San-He entry exists (minor stars like 左辅/文昌 aren't in the 主星 table).
+  const brightZz = s.brightness || "";
+  const brightSh = s.brightness_sanhe || "";
+  const bright = school === "sanhe" && brightSh ? brightSh : brightZz;
+  const mut = s.mutagen || "";
+  let cls = "text-slate-200";
+  if (s.type === "major") cls = "text-amber-100 font-semibold";else if (s.type === "soft") cls = "text-emerald-300";else if (s.type === "tough") cls = "text-rose-300";else if (s.type === "lucun") cls = "text-yellow-300";else if (s.type === "mazha") cls = "text-sky-300";
+  const displayName = lang === "en" ? (STAR_NAME_EN[s.name] || s.name) : s.name;
+  const displayBright = lang === "en" ? (bright ? " — " + (BRIGHT_EN[bright] || bright) : "") : bright;
+  const displayMut = lang === "en" ? (mut ? " [" + (MUTAGEN_EN[mut] || mut) + "]" : "") : mut;
+  return /*#__PURE__*/React.createElement("span", {
+    className: sz + (lang === "en" && small ? "" : " mr-1")
+  }, lang === "en" && small && s.type === "soft" && /*#__PURE__*/React.createElement("span", {
+    className: "text-emerald-400 mr-0.5"
+  }, "\u25cf"), lang === "en" && small && s.type === "tough" && /*#__PURE__*/React.createElement("span", {
+    className: "text-rose-400 mr-0.5"
+  }, "\u25cf"), /*#__PURE__*/React.createElement("span", {
+    className: cls
+  }, displayName), displayBright && /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-500"
+  }, displayBright), displayMut && /*#__PURE__*/React.createElement("span", {
+    className: (MUTAGEN_COLOR[mut] || "") + " font-semibold ml-0.5"
+  }, displayMut), luminaryBadge(s.name, dayNight, lang));
+}
+
+// ---- 三方四正 helper --------------------------------------------------------
+
+const BRANCH_ORDER = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+function getSanfangBranches(branch) {
+  const idx = BRANCH_ORDER.indexOf(branch);
+  if (idx === -1) return [];
+  return [BRANCH_ORDER[(idx + 4) % 12], BRANCH_ORDER[(idx + 6) % 12], BRANCH_ORDER[(idx + 8) % 12]];
+}
+
+// ---- Palace cell -----------------------------------------------------------
+
+function PalaceCell({
+  palace,
+  highlightBranch,
+  sanfangBranches,
+  activeDecadalRange,
+  onClick,
+  school,
+  dayNight
+}) {
+  if (!palace) return null;
+  const isCommand = palace.name === "命宫";
+  const isBody = palace.is_body_palace;
+  const highlight = highlightBranch === palace.earthly_branch;
+  const isSanfang = !highlight && sanfangBranches && sanfangBranches.indexOf(palace.earthly_branch) !== -1;
+  const range = palace.decadal && palace.decadal.range ? palace.decadal.range : [0, 0];
+  const aStart = range[0],
+    aEnd = range[1];
+  const decadalActive = activeDecadalRange && activeDecadalRange[0] === aStart && activeDecadalRange[1] === aEnd;
+  let bg = PALACE_BG_DEFAULT;
+  if (isCommand) bg = PALACE_BG_COMMAND;else if (["夫妻宫", "子女宫", "兄弟宫", "父母宫", "官禄宫", "事业宫"].indexOf(palace.name) >= 0) bg = PALACE_BG_ACCENT;
+  let ringClass = "";
+  if (decadalActive) ringClass = "ring-2 ring-amber-400";
+  if (highlight) ringClass = "ring-2 ring-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.4)] relative z-10";
+  if (isSanfang) ringClass = "ring-2 ring-white/70 relative z-10";
+  const lang = React.useContext(LangContext);
+  // Palace display name (EN or ZH)
+  const palaceBaseName = PALACE_NAME_EN[palace.name] || palace.name;
+  const palaceDisplay = lang === "en"
+    ? (isCommand ? "\u25c4 " + palaceBaseName : palaceBaseName) + (isBody ? " \xb7 Purpose" : "")
+    : (isBody ? palace.name + "-\u8eab\u5bab" : palace.name);
+  const lifeStageLabel = lang === "en" ? "Life Stage: " : "\u5927\u9650:";
+  const agesLabel = lang === "en" ? "Ages: " : "\u5c0f\u9650:";
+  const titleTip = lang === "en" ? "Life Stage " + aStart + "-" + aEnd : "\u5927\u9650 " + aStart + "-" + aEnd;
+  return /*#__PURE__*/React.createElement("div", {
+    onClick: onClick,
+    className: bg + " " + BORDER + " border p-1.5 text-[11px] leading-tight overflow-hidden cursor-pointer transition hover:ring-1 hover:ring-amber-300 " + ringClass,
+    title: titleTip
+  }, lang === "en"
+    ? /*#__PURE__*/React.createElement("div", {className: "mb-1"},
+        /*#__PURE__*/React.createElement("div", {className: "text-[9px] " + FAINT_TEXT + " italic leading-none mb-0.5"}, ganzhiDesc(palace.heavenly_stem, palace.earthly_branch)),
+        /*#__PURE__*/React.createElement("div", {className: "flex justify-between items-baseline"},
+          /*#__PURE__*/React.createElement("span", {className: GOLD + " font-semibold text-[10px]"}, palace.heavenly_stem, palace.earthly_branch),
+          /*#__PURE__*/React.createElement("span", {className: "font-bold text-[10px] " + (isCommand ? "text-amber-200" : GOLD)}, palaceDisplay)
+        )
+      )
+    : /*#__PURE__*/React.createElement("div", {
+        className: "flex justify-between items-baseline mb-1"
+      }, /*#__PURE__*/React.createElement("span", {
+        className: GOLD + " font-semibold text-[11px]"
+      }, palace.heavenly_stem, palace.earthly_branch), /*#__PURE__*/React.createElement("span", {
+        className: "font-bold text-[12px] " + (isCommand ? "text-amber-200" : GOLD)
+      }, "\u3010", palaceDisplay, "\u3011"))
+  , /*#__PURE__*/React.createElement("div", {
+    className: MID_TEXT
+  }, lifeStageLabel, /*#__PURE__*/React.createElement("span", {
+    className: "text-sky-300 underline decoration-dotted decoration-sky-500/50"
+  }, aStart, "-", aEnd)), /*#__PURE__*/React.createElement("div", {
+    className: FAINT_TEXT + " mb-1"
+  }, agesLabel, /*#__PURE__*/React.createElement("span", {
+    className: "text-sky-300"
+  }, (palace.ages || []).join(" "))), /*#__PURE__*/React.createElement("div", {
+    className: "mb-0.5" + (lang === "en" ? " flex flex-col" : "")
+  }, (palace.major_stars || []).map((s, i) => /*#__PURE__*/React.createElement(Star, {
+    key: i,
+    s: s,
+    school: school,
+    dayNight: dayNight
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: lang === "en" ? "flex flex-wrap" : ""
+  }, ...(lang === "en"
+    ? [...(palace.minor_stars || []), ...(palace.adjective_stars || [])].flatMap((s, i, arr) => {
+        const star = /*#__PURE__*/React.createElement(Star, {key: "aux" + i, s: s, small: true, school: school, dayNight: dayNight});
+        return i < arr.length - 1
+          ? [star, /*#__PURE__*/React.createElement("span", {key: "c" + i, className: "text-slate-400 text-[11px] mr-1"}, ",")]
+          : [star];
+      })
+    : [
+        ...(palace.minor_stars || []).map((s, i) => /*#__PURE__*/React.createElement(Star, {key: "m" + i, s: s, small: true, school: school, dayNight: dayNight})),
+        ...(palace.adjective_stars || []).map((s, i) => /*#__PURE__*/React.createElement(Star, {key: "a" + i, s: s, small: true, school: school, dayNight: dayNight}))
+      ]
+  )), /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] mt-1 flex justify-between items-baseline gap-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-400 shrink-0"
+  }, palace.changsheng12
+      ? (lang === "en" ? (CHANGSHENG_EN[palace.changsheng12] || palace.changsheng12) : palace.changsheng12)
+      : ""), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-500 text-right"
+  }, [
+    palace.boshi12 ? (lang === "en" ? (STAR_NAME_EN[palace.boshi12] || palace.boshi12) : palace.boshi12) : null,
+    palace.jiangqian12 ? (lang === "en" ? (STAR_NAME_EN[palace.jiangqian12] || palace.jiangqian12) : palace.jiangqian12) : null,
+    palace.suiqian12 ? (lang === "en" ? (STAR_NAME_EN[palace.suiqian12] || palace.suiqian12) : palace.suiqian12) : null
+  ].filter(Boolean).join(", "))));
+}
+
+// ---- Centre info panel -----------------------------------------------------
+
+function CentreInfo({
+  person
+}) {
+  const lang = React.useContext(LangContext);
+  const b = person.birth;
+  const z = person.zwds;
+  const yinYang = yinYangGender(b.gender, person.bazi.pillars.year.stem);
+  const mutagens = collectMutagens(z.palaces);
+  const isEn = lang === "en";
+  // Translated helpers
+  const solarLabel = isEn ? "Solar: " : "阳历：";
+  const lunarLabel = isEn ? "Lunisolar: " : "农历：";
+  const pillarsLabel = isEn ? "Four Pillars: " : "干支：";
+  const elClassLabel = isEn ? "Element Class: " : "五行局：";
+  const transformsLabel = isEn ? "Year Transforms: " : "生年四化：";
+  const soulLabel = isEn ? "Soul Star: " : "命主：";
+  const bodyLabel = isEn ? "Body Star: " : "身主：";
+  const zodiacLabel = isEn ? "Zodiac: " : "生肖：";
+  const signLabel = isEn ? "Sign: " : "星座：";
+  const lifePalLabel = isEn ? "Life Palace: " : "命宫：";
+  const purpPalLabel = isEn ? "Purpose Palace: " : "身宫：";
+  const dayNightLabel = isEn ? "Day/Night: " : "日夜星辉：";
+  // Translated values
+  const displayElClass = isEn ? (FIVE_CLASS_EN[z.five_elements_class] || z.five_elements_class) : longFiveElementsName(z.five_elements_class);
+  const displaySoul = isEn ? (STAR_NAME_EN[z.soul] || z.soul) : z.soul;
+  const displayBody = isEn ? (STAR_NAME_EN[z.body] || z.body) : z.body;
+  const displayZodiac = isEn ? (ZODIAC_ZH_EN[b.zodiac] || b.zodiac) : b.zodiac;
+  const displaySign = isEn ? (SIGN_ZH_EN[b.sign] || b.sign) : b.sign;
+  const displayYinYang = isEn
+    ? (YINYANG_EN_MAP[STEM_YY[person.bazi.pillars.year.stem]] || "") + " " + (b.gender === "男" ? "Male" : "Female")
+    : yinYang;
+  // EN lunar date (numeric) computed from solar date via lunar-javascript
+  let displayLunar;
+  if (isEn && window.Solar) {
+    try {
+      const [dp] = b.solar.split(' ');
+      const [ly, lm, ld] = dp.split('-').map(Number);
+      const lun = window.Solar.fromYmd(ly, lm, ld).getLunar();
+      const lMonthRaw = lun.getMonth();
+      const isLeap = lMonthRaw < 0;
+      const lMonthAbs = Math.abs(lMonthRaw);
+      displayLunar = lun.getYear() + '-' + (isLeap ? 'L' : '') + String(lMonthAbs).padStart(2,'0') + '-' + String(lun.getDay()).padStart(2,'0');
+    } catch(e) { displayLunar = b.lunar; }
+  } else {
+    displayLunar = b.lunar;
+  }
+  // Life / Purpose palace: look up English name by earthly branch
+  const palByBrMap = {};
+  z.palaces.forEach(p => { palByBrMap[p.earthly_branch] = p; });
+  const lifePalChName = palByBrMap[z.soul_palace_branch] && palByBrMap[z.soul_palace_branch].name;
+  const purpPalChName = palByBrMap[z.body_palace_branch] && palByBrMap[z.body_palace_branch].name;
+  const displayLifePal = isEn ? (PALACE_NAME_EN[lifePalChName] || z.soul_palace_branch) : z.soul_palace_branch;
+  const displayPurpPal = isEn ? (PALACE_NAME_EN[purpPalChName] || z.body_palace_branch) : z.body_palace_branch;
+  // Day/Night EN note
+  const dayNightNote = (() => {
+    if (!person.day_night) return null;
+    if (!isEn) return person.day_night.note;
+    const dn = person.day_night;
+    const period = dn.period === '日' ? 'Day' : 'Night';
+    const hh = String(dn.hour).padStart(2, '0');
+    const STATE_EN = {'增辉': 'brightens', '增辉·峰': 'peaks in brightness', '失辉': 'dims'};
+    return 'Born in the ' + period + ' (' + hh + ':00). The Sun ' + (STATE_EN[dn.sun_state] || dn.sun_state) + '; The Moon ' + (STATE_EN[dn.moon_state] || dn.moon_state) + '.';
+  })();
+  // Current major luck cycle
+  const currentYear = new Date().getFullYear();
+  const activeCycle = (person.bazi.da_yun || []).find(d => d.ganzhi && currentYear >= d.start_year && currentYear <= d.end_year) || null;
+  const currentCycleLabel = isEn ? "Current Cycle: " : "大运：";
+  const displayCurrentCycle = activeCycle
+    ? (isEn
+        ? activeCycle.ganzhi + " · " + ganzhiDesc(activeCycle.ganzhi[0], activeCycle.ganzhi[1]) + " (" + activeCycle.start_year + "\u2013" + activeCycle.end_year + ")"
+        : activeCycle.ganzhi + "（" + activeCycle.start_year + "–" + activeCycle.end_year + "）")
+    : null;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "col-span-2 row-span-2 bg-slate-950/80 " + BORDER + " border p-4 text-[12px] leading-6 " + SOFT_TEXT
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-1 gap-1"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, solarLabel), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-200"
+  }, b.solar.replace(" ", ", ")), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-100 font-semibold ml-3"
+  }, displayYinYang)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, lunarLabel), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-200"
+  }, isEn ? displayLunar : b.lunar + b.time_branch)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, pillarsLabel), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-200"
+  }, b.chinese_date), /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, isEn ? " (" + b.time_range + ")" : " (" + b.time_branch + " " + b.time_range + ")")), displayCurrentCycle && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, currentCycleLabel), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-100 font-semibold"
+  }, displayCurrentCycle)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, elClassLabel), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-100 font-semibold"
+  }, displayElClass)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, transformsLabel), mutagens.map((m, i) => isEn
+    ? /*#__PURE__*/React.createElement("span", {key: i, className: "mr-2 text-slate-200"},
+        (STAR_NAME_EN[m.star] || m.star),
+        /*#__PURE__*/React.createElement("span", {className: (MUTAGEN_COLOR[m.mutagen] || "") + " font-semibold ml-0.5"}, " [" + (MUTAGEN_EN[m.mutagen] || m.mutagen) + "]")
+      )
+    : /*#__PURE__*/React.createElement("span", {key: i, className: "mr-2 text-slate-200"},
+        m.star, "化",
+        /*#__PURE__*/React.createElement("span", {className: (MUTAGEN_COLOR[m.mutagen] || "") + " font-semibold"}, m.mutagen)
+      )
+  )), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, soulLabel), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-100 font-semibold"
+  }, displaySoul), /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT + " ml-4"
+  }, bodyLabel), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-100 font-semibold"
+  }, displayBody)), /*#__PURE__*/React.createElement("div", {
+    className: "mt-2 pt-2 border-t border-slate-700 text-slate-400 text-[11px]"
+  }, /*#__PURE__*/React.createElement("div", null, zodiacLabel, displayZodiac, "　", signLabel, displaySign), /*#__PURE__*/React.createElement("div", null, isEn ? purpPalLabel + displayPurpPal : lifePalLabel + displayLifePal + "　" + purpPalLabel + displayPurpPal), person.day_night && /*#__PURE__*/React.createElement("div", {
+    className: "mt-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, dayNightLabel), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-300"
+  }, dayNightNote)))));
+}
+
+// ---- ZWDS grid -------------------------------------------------------------
+
+function ZwdsGrid({
+  person,
+  highlightBranch,
+  activeDecadalRange,
+  onPalaceClick,
+  school
+}) {
+  const palByBranch = {};
+  person.zwds.palaces.forEach(p => {
+    palByBranch[p.earthly_branch] = p;
+  });
+  const sanfangBranches = highlightBranch ? getSanfangBranches(highlightBranch) : [];
+  const makeCell = br => /*#__PURE__*/React.createElement(PalaceCell, {
+    palace: palByBranch[br],
+    highlightBranch: highlightBranch,
+    sanfangBranches: sanfangBranches,
+    activeDecadalRange: activeDecadalRange,
+    onClick: () => onPalaceClick(palByBranch[br]),
+    school: school,
+    dayNight: person.day_night
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-4 grid-rows-4 gap-0 w-full",
+    style: {
+      minHeight: 760
+    }
+  }, makeCell("巳"), makeCell("午"), makeCell("未"), makeCell("申"), makeCell("辰"), /*#__PURE__*/React.createElement(CentreInfo, {
+    person: person
+  }), makeCell("酉"), makeCell("卯"), makeCell("戌"), makeCell("寅"), makeCell("丑"), makeCell("子"), makeCell("亥"));
+}
+
+// ---- BaZi panel ------------------------------------------------------------
+
+function Pillar({
+  label,
+  pillar,
+  dayMaster,
+  tenGodLabel,
+  highlight
+}) {
+  const lang = React.useContext(LangContext);
+  const sEl = STEM_EL[pillar.stem];
+  const bEl = BR_EL[pillar.branch];
+  const hiddenStem = BR_HIDDEN_STEM[pillar.branch];
+  const branchTg = tenGod(dayMaster, hiddenStem);
+  const displayTgLabel = lang === "en" ? (TEN_GOD_EN_MAP[tenGodLabel] || tenGodLabel) : tenGodLabel;
+  const displayBranchTg = lang === "en" ? (TEN_GOD_EN_MAP[branchTg] || branchTg) : branchTg;
+  return /*#__PURE__*/React.createElement("div", {
+    className: BORDER + " border rounded-lg overflow-hidden bg-slate-900/60 " + (highlight ? "ring-2 ring-amber-400" : "")
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-slate-800 " + GOLD + " text-center py-1 text-sm font-semibold border-b " + BORDER
+  }, label), /*#__PURE__*/React.createElement("div", {
+    className: "text-center py-1 text-xs text-slate-400"
+  }, displayTgLabel), /*#__PURE__*/React.createElement("div", {
+    className: "text-center py-2 text-3xl font-bold " + EL_COLOR[sEl] + " " + EL_BG[sEl]
+  }, pillar.stem), /*#__PURE__*/React.createElement("div", {
+    className: "text-center py-2 text-3xl font-bold " + EL_COLOR[bEl] + " " + EL_BG[bEl]
+  }, pillar.branch), /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-center items-baseline gap-1 py-1 border-t border-b " + BORDER
+  }, (BR_ALL_HIDDEN_STEMS[pillar.branch] || [pillar.branch]).map((s, i, arr) => {
+    const isMain = arr.length === 1 || (arr.length > 1 && i === (arr.length === 3 ? 1 : 0));
+    const sElH = STEM_EL[s];
+    return /*#__PURE__*/React.createElement("span", {
+      key: i,
+      className: (isMain ? "text-base font-bold " : "text-xs ") + (EL_COLOR[sElH] || "text-slate-300")
+    }, s);
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "text-center py-1 text-[11px] text-slate-400"
+  }, displayBranchTg, "（", hiddenStem, "）"));
+}
+
+function BaziPanel({
+  person,
+  selectedYear,
+  onYearClick
+}) {
+  const lang = React.useContext(LangContext);
+  const isEn = lang === "en";
+  const b = person.bazi;
+  const pillars = b.pillars;
+  const dm = b.day_master;
+  const yearLabel = isEn ? "Year" : "年柱";
+  const monthLabel = isEn ? "Month" : "月柱";
+  const dayLabel = isEn ? "Day" : "日柱";
+  const hourLabel = isEn ? "Hour" : "时柱";
+  const dmLabel = isEn ? "Day Master" : "日主";
+  const headingLabel = isEn ? "Eight Characters \xb7 Four Pillars" : "八字 \xb7 四柱";
+  const dayMasterLabel = isEn ? "Day Master: " : "日主：";
+  const cyclesLabel = isEn ? "Major Cycles \xb7 10-year" : "大运 \xb7 10-year cycles";
+  const dmYinYang = isEn ? (YINYANG_EN_MAP[b.day_master_yin_yang] || b.day_master_yin_yang) : b.day_master_yin_yang;
+  const dmElement = isEn ? (ELEMENT_EN_MAP[b.day_master_element] || b.day_master_element) : b.day_master_element;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "bg-slate-900/70 " + BORDER + " border rounded-lg p-4 space-y-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold " + GOLD
+  }, headingLabel), /*#__PURE__*/React.createElement("div", {
+    className: "text-sm " + SOFT_TEXT
+  }, dayMasterLabel, /*#__PURE__*/React.createElement("span", {
+    className: "font-bold text-lg " + EL_COLOR[b.day_master_element]
+  }, dm), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-500 ml-1"
+  }, "(", dmYinYang, " ", dmElement, ")"))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-4 gap-3"
+  }, /*#__PURE__*/React.createElement(Pillar, {
+    label: yearLabel,
+    pillar: pillars.year,
+    dayMaster: dm,
+    tenGodLabel: b.ten_gods.year_stem,
+    highlight: false
+  }), /*#__PURE__*/React.createElement(Pillar, {
+    label: monthLabel,
+    pillar: pillars.month,
+    dayMaster: dm,
+    tenGodLabel: b.ten_gods.month_stem,
+    highlight: false
+  }), /*#__PURE__*/React.createElement(Pillar, {
+    label: dayLabel,
+    pillar: pillars.day,
+    dayMaster: dm,
+    tenGodLabel: dmLabel,
+    highlight: true
+  }), /*#__PURE__*/React.createElement(Pillar, {
+    label: hourLabel,
+    pillar: pillars.hour,
+    dayMaster: dm,
+    tenGodLabel: b.ten_gods.hour_stem,
+    highlight: false
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-semibold " + GOLD + " mb-2"
+  }, cyclesLabel), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-5 md:grid-cols-10 gap-2 text-[11px]"
+  }, b.da_yun.map((d, i) => {
+    if (!d.ganzhi) return null;
+    const sEl = STEM_EL[d.ganzhi[0]];
+    const bEl = BR_EL[d.ganzhi[1]];
+    const active = selectedYear >= d.start_year && selectedYear <= d.end_year;
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      onClick: () => onYearClick && onYearClick(d.start_year),
+      className: BORDER + " border rounded p-1 text-center cursor-pointer transition hover:bg-slate-800 " + (active ? "ring-2 ring-amber-400 bg-slate-800" : "bg-slate-900/60")
+    }, /*#__PURE__*/React.createElement("div", {
+      className: MID_TEXT
+    }, d.start_age, "–", d.end_age), /*#__PURE__*/React.createElement("div", {
+      className: "text-slate-500 text-[10px]"
+    }, d.start_year, "–", d.end_year), /*#__PURE__*/React.createElement("div", {
+      className: "flex justify-center gap-0.5 mt-1"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "font-bold " + EL_COLOR[sEl]
+    }, d.ganzhi[0]), /*#__PURE__*/React.createElement("span", {
+      className: "font-bold " + EL_COLOR[bEl]
+    }, d.ganzhi[1])), /*#__PURE__*/React.createElement("div", {
+      className: "text-slate-400 text-[10px] mt-1"
+    }, isEn ? (TEN_GOD_EN_MAP[d.ten_god] || d.ten_god) : d.ten_god));
+  }))));
+}
+
+// ---- New-person form -------------------------------------------------------
+
+function NewPersonForm({
+  onClose,
+  onRegister
+}) {
+  const [name, setName] = useState("");
+  const [gender, setGender] = useState("M");
+  const [dob, setDob] = useState("");
+  const [time, setTime] = useState("12:00");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const lang = React.useContext(LangContext);
+  const isEn = lang === "en";
+  const libsReady = typeof window !== "undefined" && !!(window.iztro && window.iztro.astro && window.Solar);
+  const handleRegister = () => {
+    setError("");
+    if (!name.trim()) {
+      setError(isEn ? "Please enter a name." : "请输入姓名。");
+      return;
+    }
+    if (!dob) {
+      setError(isEn ? "Please select a date of birth." : "请选择出生日。");
+      return;
+    }
+    if (!libsReady) {
+      setError(isEn ? "Chart libraries still loading — retry in a moment." : "星历库仍在加载中，请稍候再试。");
+      return;
+    }
+    setSaving(true);
+    try {
+      const person = computePerson({
+        name: name.trim(),
+        gender,
+        dob,
+        time
+      });
+      onRegister(person);
+    } catch (e) {
+      console.error(e);
+      setError((isEn ? "Computation failed: " : "计算失败：") + (e && e.message ? e.message : String(e)));
+    } finally {
+      setSaving(false);
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 bg-black/70 flex items-center justify-center z-50",
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-slate-900 " + GOLD_BORDER + " border rounded-lg p-6 w-[480px] max-w-[94vw] " + SOFT_TEXT,
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold mb-4 " + GOLD
+  }, isEn ? "Add New Chart" : "\u65B0\u589E\u547D\u76D8"), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-3 text-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "w-20 text-slate-400"
+  }, isEn ? "Name" : "\u59D3\u540D"), /*#__PURE__*/React.createElement("input", {
+    value: name,
+    onChange: e => setName(e.target.value),
+    className: "flex-1 bg-slate-950 " + BORDER + " border rounded px-2 py-1 text-slate-100",
+    placeholder: "e.g. Lee"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "w-20 text-slate-400"
+  }, isEn ? "Gender" : "\u6027\u522B"), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-4"
+  }, /*#__PURE__*/React.createElement("label", null, /*#__PURE__*/React.createElement("input", {
+    type: "radio",
+    checked: gender === "M",
+    onChange: () => setGender("M"),
+    className: "mr-1"
+  }), isEn ? " Male" : " \u7537"), /*#__PURE__*/React.createElement("label", null, /*#__PURE__*/React.createElement("input", {
+    type: "radio",
+    checked: gender === "F",
+    onChange: () => setGender("F"),
+    className: "mr-1"
+  }), isEn ? " Female" : " \u5973"))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "w-20 text-slate-400"
+  }, isEn ? "Date of Birth" : "\u51FA\u751F\u65E5"), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: dob,
+    onChange: e => setDob(e.target.value),
+    className: "flex-1 bg-slate-950 " + BORDER + " border rounded px-2 py-1 text-slate-100"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "w-20 text-slate-400"
+  }, isEn ? "Birth Time" : "\u51FA\u751F\u65F6"), /*#__PURE__*/React.createElement("input", {
+    type: "time",
+    value: time,
+    onChange: e => setTime(e.target.value),
+    className: "flex-1 bg-slate-950 " + BORDER + " border rounded px-2 py-1 text-slate-100"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "ml-2 text-xs text-slate-500"
+  }, isEn ? "(24h, solar)" : "(24h, \u9633\u5386)")), error && /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-rose-300 bg-rose-950/40 border border-rose-800/40 rounded p-2"
+  }, error), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-slate-500 pt-1"
+  }, isEn ? "" : "\u6570\u636E\u4FDD\u5B58\u4E8E JSON \u6587\u4EF6\uFF08\u82E5\u5DF2\u8BBE\u7F6E\uFF09\u6216\u6B64\u6D4F\u89C8\u5668\u3002", /*#__PURE__*/React.createElement("span", {
+    className: "block"
+  }, "Saved to your data file if set, otherwise browser storage."))), /*#__PURE__*/React.createElement("div", {
+    className: "mt-4 flex justify-end gap-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    className: "px-3 py-1 rounded bg-slate-700 text-slate-100 hover:bg-slate-600"
+  }, isEn ? "Close" : "\u5173\u95ED"), /*#__PURE__*/React.createElement("button", {
+    onClick: handleRegister,
+    disabled: saving,
+    className: GOLD_BG + " hover:bg-amber-400 text-slate-900 px-4 py-1 rounded font-semibold " + (saving ? "opacity-60 cursor-wait" : "")
+  }, saving ? (isEn ? "Processing…" : "计算中…") : (isEn ? "Register" : "确认")))));
+}
+
+// ---- Edit-person form ------------------------------------------------------
+
+function EditPersonForm({
+  person,
+  onClose,
+  onSave
+}) {
+  const [name, setName] = useState(person.name || "");
+  const [gender, setGender] = useState(person.gender === "女" ? "F" : "M");
+  const [dob, setDob] = useState(person.dob || "");
+  const [time, setTime] = useState(person.time || "12:00");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const lang = React.useContext(LangContext);
+  const isEn = lang === "en";
+  const libsReady = typeof window !== "undefined" && !!(window.iztro && window.iztro.astro && window.Solar);
+  const handleSave = () => {
+    setError("");
+    if (!name.trim()) {
+      setError(isEn ? "Please enter a name." : "请输入姓名。");
+      return;
+    }
+    if (!dob) {
+      setError(isEn ? "Please select a date of birth." : "请选择出生日。");
+      return;
+    }
+    if (!libsReady) {
+      setError(isEn ? "Chart libraries still loading — retry in a moment." : "星历库仍在加载中，请稍候再试。");
+      return;
+    }
+    setSaving(true);
+    try {
+      const updated = computePerson({
+        name: name.trim(),
+        gender,
+        dob,
+        time,
+        id: person.id
+      });
+      onSave(updated);
+    } catch (e) {
+      console.error(e);
+      setError((isEn ? "Computation failed: " : "计算失败：") + (e && e.message ? e.message : String(e)));
+    } finally {
+      setSaving(false);
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 bg-black/70 flex items-center justify-center z-50",
+    onClick: onClose
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-slate-900 " + GOLD_BORDER + " border rounded-lg p-6 w-[480px] max-w-[94vw] " + SOFT_TEXT,
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold mb-4 " + GOLD
+  }, isEn ? "Edit Chart" : "\u7F16\u8F91\u547D\u76D8"), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-3 text-sm"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "w-20 text-slate-400"
+  }, isEn ? "Name" : "姓名"), /*#__PURE__*/React.createElement("input", {
+    value: name,
+    onChange: e => setName(e.target.value),
+    className: "flex-1 bg-slate-950 " + BORDER + " border rounded px-2 py-1 text-slate-100",
+    placeholder: "e.g. Lee"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "w-20 text-slate-400"
+  }, isEn ? "Gender" : "性别"), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-4"
+  }, /*#__PURE__*/React.createElement("label", null, /*#__PURE__*/React.createElement("input", {
+    type: "radio",
+    checked: gender === "M",
+    onChange: () => setGender("M"),
+    className: "mr-1"
+  }), isEn ? " Male" : " 男"), /*#__PURE__*/React.createElement("label", null, /*#__PURE__*/React.createElement("input", {
+    type: "radio",
+    checked: gender === "F",
+    onChange: () => setGender("F"),
+    className: "mr-1"
+  }), isEn ? " Female" : " 女"))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "w-20 text-slate-400"
+  }, isEn ? "Date of Birth" : "出生日"), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    value: dob,
+    onChange: e => setDob(e.target.value),
+    className: "flex-1 bg-slate-950 " + BORDER + " border rounded px-2 py-1 text-slate-100"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "w-20 text-slate-400"
+  }, isEn ? "Birth Time" : "出生时"), /*#__PURE__*/React.createElement("input", {
+    type: "time",
+    value: time,
+    onChange: e => setTime(e.target.value),
+    className: "flex-1 bg-slate-950 " + BORDER + " border rounded px-2 py-1 text-slate-100"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "ml-2 text-xs text-slate-500"
+  }, isEn ? "(24h, solar)" : "(24h, 阳历)")), error && /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-rose-300 bg-rose-950/40 border border-rose-800/40 rounded p-2"
+  }, error)), /*#__PURE__*/React.createElement("div", {
+    className: "mt-4 flex justify-end gap-2"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    className: "px-3 py-1 rounded bg-slate-700 text-slate-100 hover:bg-slate-600"
+  }, isEn ? "Close" : "关闭"), /*#__PURE__*/React.createElement("button", {
+    onClick: handleSave,
+    disabled: saving,
+    className: GOLD_BG + " hover:bg-amber-400 text-slate-900 px-4 py-1 rounded font-semibold " + (saving ? "opacity-60 cursor-wait" : "")
+  }, saving ? (isEn ? "Processing…" : "计算中…") : (isEn ? "Save" : "保存")))));
+}
+
+// ---- Top-level app ---------------------------------------------------------
+
+function App() {
+  const [people, setPeople] = useState(() => mergePeople(DATA.people || [], loadPeopleFromStorage() || []));
+  const fileHandleRef = React.useRef(null);
+  const [fileName, setFileName] = useState(null); // null = browser storage
+  const [fileReady, setFileReady] = useState(false);
+
+  // On mount: reconnect to previously chosen file (silent — no prompt until user clicks)
+  useEffect(() => {
+    if (!FILE_API_SUPPORTED) return;
+    idbGetHandle().then(async handle => {
+      if (!handle) return;
+      const ok = await ensureFilePermission(handle);
+      if (!ok) return;
+      const loaded = await readPeopleFile(handle);
+      if (loaded !== null) {
+        fileHandleRef.current = handle;
+        setFileName(handle.name);
+        setFileReady(true);
+        setPeople(mergePeople(DATA.people || [], loaded));
+      }
+    });
+  }, []);
+
+  // Persist whenever people changes
+  useEffect(() => {
+    if (fileHandleRef.current && fileReady) {
+      writePeopleFile(fileHandleRef.current, people);
+    } else {
+      savePeopleToStorage(people);
+    }
+  }, [people, fileReady]);
+  const [activeId, setActiveId] = useState(people[0] ? people[0].id : null);
+  const [tab, setTab] = useState("zwds");
+  const [showNew, setShowNew] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [highlightBranch, setHighlightBranch] = useState(null);
+  const [activeDecadalRange, setActiveDecadalRange] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  // 亮度派别：sanhe = 三合派 (全书)  |  zhongzhou = 中州派 (iztro)
+  const [school, setSchool] = useState("sanhe");
+  // Language toggle — zh = Chinese (dark), en = English (light beige)
+  const [lang, setLang] = useState("en");
+  const [darkMode, setDarkMode] = useState(true);
+  useEffect(() => {
+    document.body.className = darkMode ? "en-dark-body" : "en-body";
+  }, [lang, darkMode]);
+  // 字号缩放 (zoom). 1.0 = 100%, range 0.8 - 1.6.
+  const [textScale, setTextScale] = useState(1.0);
+  const person = useMemo(() => people.find(p => p.id === activeId), [people, activeId]);
+  if (!person) {
+    return /*#__PURE__*/React.createElement(LangContext.Provider, {value: lang}, /*#__PURE__*/React.createElement("div", {
+      className: "min-h-screen bg-slate-950 text-slate-100 font-sans" + (darkMode ? " en-dark-theme" : " en-theme")
+    }, /*#__PURE__*/React.createElement("header", {
+      className: "bg-slate-900 border-slate-700 border-b px-4 py-2 flex items-center justify-between shadow-lg"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-3"
+    }, /*#__PURE__*/React.createElement("h1", {
+      className: "text-sm font-bold tracking-wide text-amber-300"
+    }, lang === "en" ? "Astrology Chart Calculator V1.0" : "\u547D\u76D8"), /*#__PURE__*/React.createElement("span", {
+      className: "text-xs text-slate-500"
+    }, lang === "en" ? "Designed by Andy Low" : "\u7531Andy Low\u8BBE\u8BA1")), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-3"
+    }, /*#__PURE__*/React.createElement("button", {
+      onClick: () => setShowNew(true),
+      className: "bg-amber-500 hover:bg-amber-400 text-slate-900 px-3 py-1 rounded text-xs font-semibold"
+    }, lang === "en" ? "+ Add" : "+ \u65B0\u589E"), /*#__PURE__*/React.createElement("div", {
+      className: "text-xs border-l border-slate-700 pl-3 ml-1 flex items-center gap-1"
+    }, /*#__PURE__*/React.createElement("button", {
+      onClick: () => setLang("en"),
+      className: lang === "en" ? "text-amber-300 font-semibold" : "text-slate-400 hover:text-slate-200"
+    }, "EN"), /*#__PURE__*/React.createElement("span", {
+      className: "text-slate-600 mx-1"
+    }, "|"), /*#__PURE__*/React.createElement("button", {
+      onClick: () => setLang("zh"),
+      className: lang === "zh" ? "text-amber-300 font-semibold" : "text-slate-400 hover:text-slate-200"
+    }, "\u4E2D\u6587")))), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-center py-24 flex-col gap-6"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "text-slate-400 text-base"
+    }, lang === "en" ? "No charts yet — add a person to get started." : "\u5C1A\u672A\u6CE8\u518C\u4EFB\u4F55\u4EBA\u5458"), /*#__PURE__*/React.createElement("button", {
+      onClick: () => setShowNew(true),
+      className: "bg-amber-500 hover:bg-amber-400 text-slate-900 px-6 py-2 rounded font-semibold text-sm"
+    }, lang === "en" ? "+ Add Person" : "+ \u65B0\u589E\u4EBA\u5458")), showNew && /*#__PURE__*/React.createElement(NewPersonForm, {
+      onRegister: p => { setPeople(prev => { const idx = prev.findIndex(x => x.id === p.id); if (idx >= 0) { const out = prev.slice(); out[idx] = p; return out; } return prev.concat([p]); }); setActiveId(p.id); setShowNew(false); },
+      onClose: () => setShowNew(false)
+    })));
+  }
+  const onPalaceClick = p => {
+    if (!p) return;
+    setHighlightBranch(p.earthly_branch === highlightBranch ? null : p.earthly_branch);
+    setActiveDecadalRange(p.decadal && p.decadal.range ? p.decadal.range : null);
+  };
+  const onEdit = updated => {
+    setPeople(prev => {
+      const idx = prev.findIndex(x => x.id === updated.id);
+      if (idx < 0) return prev;
+      const out = prev.slice();
+      out[idx] = updated;
+      return out;
+    });
+    setShowEdit(false);
+    setHighlightBranch(null);
+    setActiveDecadalRange(null);
+  };
+  const onRegister = person => {
+    setPeople(prev => {
+      const idx = prev.findIndex(x => x.id === person.id);
+      if (idx >= 0) {
+        const out = prev.slice();
+        out[idx] = person;
+        return out;
+      }
+      return prev.concat([person]);
+    });
+    setActiveId(person.id);
+    setShowNew(false);
+    setHighlightBranch(null);
+    setActiveDecadalRange(null);
+  };
+  const onSetFile = async () => {
+    if (!FILE_API_SUPPORTED) {
+      alert("File System API not supported. Please use Chrome or Edge.");
+      return;
+    }
+    const handle = await pickFile();
+    if (!handle) return;
+    const ok = await ensureFilePermission(handle);
+    if (!ok) return;
+    const existing = await readPeopleFile(handle);
+    fileHandleRef.current = handle;
+    await idbSetHandle(handle);
+    setFileName(handle.name);
+    setFileReady(true);
+    if (existing && existing.length > 0) {
+      setPeople(prev => mergePeople(prev, existing));
+    } else {
+      await writePeopleFile(handle, people);
+    }
+  };
+  const onDelete = () => {
+    if (!person) return;
+    if (!window.confirm(`删除 ${person.name}（${person.dob} ${person.time}）？\nDelete this person? This cannot be undone.`)) return;
+    setPeople(prev => {
+      const next = prev.filter(p => p.id !== activeId);
+      const remaining = next.find(p => p.id !== activeId) || next[0] || null;
+      setActiveId(remaining ? remaining.id : null);
+      return next;
+    });
+  };
+  const onExportJson = () => {
+    const payload = {
+      generated_at: new Date().toISOString(),
+      version: "client-v1",
+      people
+    };
+    downloadJSON("destiny_people_" + new Date().toISOString().slice(0, 10) + ".json", payload);
+  };
+  const onImportJson = file => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const obj = JSON.parse(String(reader.result || ""));
+        const list = Array.isArray(obj) ? obj : obj && Array.isArray(obj.people) ? obj.people : null;
+        if (!list) {
+          alert("导入失败：格式无法识别 Import failed: unrecognised format.");
+          return;
+        }
+        setPeople(prev => mergePeople(prev, list));
+        alert("已导入 " + list.length + " 条记录。Imported " + list.length + " record(s).");
+      } catch (e) {
+        alert("导入失败 Import failed: " + (e && e.message ? e.message : String(e)));
+      }
+    };
+    reader.readAsText(file, "utf-8");
+  };
+  const onExport = () => {
+    const txt = buildExportText(person, school);
+    const safeName = (person.name || "chart").replace(/[^\w\u4e00-\u9fff-]+/g, "_");
+    const safeDob = (person.dob || "").replace(/[-:]/g, "");
+    downloadText(safeName + "_destiny_reading_" + safeDob + ".txt", txt);
+  };
+  return /*#__PURE__*/React.createElement(LangContext.Provider, {value: lang}, /*#__PURE__*/React.createElement("div", {
+    className: "min-h-screen bg-slate-950 text-slate-100 font-sans" + (darkMode ? " en-dark-theme" : " en-theme")
+  }, /*#__PURE__*/React.createElement("header", {
+    className: "bg-slate-900 " + BORDER + " border-b px-4 py-2 flex items-center justify-between shadow-lg"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-3"
+  }, /*#__PURE__*/React.createElement("h1", {
+    className: "text-sm font-bold tracking-wide " + GOLD
+  }, lang === "en" ? "Astrology Chart Calculator V1.0" : "\u547D\u76D8"), /*#__PURE__*/React.createElement("span", {
+    className: "text-xs text-slate-500"
+  }, lang === "en" ? "Designed by Andy Low" : "\u7531Andy Low\u8BBE\u8BA1")), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-3"
+  }, /*#__PURE__*/React.createElement("select", {
+    value: activeId || "",
+    onChange: e => {
+      setActiveId(e.target.value);
+      setHighlightBranch(null);
+      setActiveDecadalRange(null);
+    },
+    className: "bg-slate-800 text-slate-100 " + BORDER + " border rounded px-2 py-1 text-xs max-w-[200px]"
+  }, people.map(p => /*#__PURE__*/React.createElement("option", {
+    key: p.id,
+    value: p.id
+  }, p.name, lang === "en" ? " (" : "\uFF08", lang === "en" ? (p.gender === "F" || p.gender === "女" ? "F" : "M") : genderToZh(p.gender), " ", p.dob, " ", p.time, lang === "en" ? ")" : "\uFF09"))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowNew(true),
+    className: GOLD_BG + " hover:bg-amber-400 text-slate-900 px-3 py-1 rounded text-xs font-semibold"
+  }, lang === "en" ? "+ Add" : "+ \u65B0\u589E"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowEdit(true),
+    className: "bg-slate-700 hover:bg-slate-600 text-slate-100 px-3 py-1 rounded text-xs font-semibold border " + BORDER,
+    title: "\u7F16\u8F91\u5F53\u524D\u9009\u4E2D\u4EBA\u5458\u751F\u65E5 Edit selected person's birth details"
+  }, lang === "en" ? "\u270E Edit" : "\u270E \u7F16\u8F91"), /*#__PURE__*/React.createElement("button", {
+    onClick: onDelete,
+    className: "bg-rose-700 hover:bg-rose-600 text-white px-3 py-1 rounded text-xs font-semibold",
+    title: "\u5220\u9664\u5F53\u524D\u9009\u4E2D\u4EBA\u5458 Delete selected person"
+  }, lang === "en" ? "\u2715 Delete" : "\u2715 \u5220\u9664"), FILE_API_SUPPORTED && /*#__PURE__*/React.createElement("button", {
+    onClick: onSetFile,
+    className: "px-2 py-1 rounded text-xs border " + BORDER + " " + (fileReady ? "bg-emerald-900/40 text-emerald-400 hover:bg-emerald-900/60" : "bg-slate-800 hover:bg-slate-700 " + SOFT_TEXT),
+    title: fileReady ? `Connected to file: ${fileName}` : "Set a JSON file to store people data (replaces browser storage)"
+  }, fileReady ? `📁 ${fileName}` : "📁 Set data file"), /*#__PURE__*/React.createElement("button", {
+    onClick: onExport,
+    className: "bg-slate-800 hover:bg-slate-700 " + SOFT_TEXT + " px-3 py-1 rounded text-xs font-semibold border " + BORDER,
+    title: "导出命盘为.txt文件 Export chart to .txt"
+  }, lang === "en" ? "↓ Export" : "↓ 导出"), /*#__PURE__*/React.createElement("button", {
+    onClick: onExportJson,
+    className: "bg-slate-800 hover:bg-slate-700 " + SOFT_TEXT + " px-2 py-1 rounded text-xs border " + BORDER,
+    title: "导出全部人员为JSON备份 Export all people as JSON backup"
+  }, "↓ JSON"), /*#__PURE__*/React.createElement("label", {
+    className: "bg-slate-800 hover:bg-slate-700 " + SOFT_TEXT + " px-2 py-1 rounded text-xs border " + BORDER + " cursor-pointer",
+    title: "从JSON文件导入人员 Import people from JSON"
+  }, "↑ JSON", /*#__PURE__*/React.createElement("input", {
+    type: "file",
+    accept: "application/json,.json",
+    className: "hidden",
+    onChange: e => {
+      const f = e.target.files && e.target.files[0];
+      onImportJson(f);
+      e.target.value = "";
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 text-xs border-l " + BORDER + " pl-3 ml-1"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTextScale(v => Math.max(0.8, +(v - 0.1).toFixed(2))),
+    className: "w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 " + SOFT_TEXT,
+    title: "缩小 Smaller"
+  }, "−"), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0.8",
+    max: "1.6",
+    step: "0.05",
+    value: textScale,
+    onChange: e => setTextScale(parseFloat(e.target.value)),
+    className: "accent-amber-400 w-28",
+    title: "字号 Text size"
+  }), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTextScale(v => Math.min(1.6, +(v + 0.1).toFixed(2))),
+    className: "w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 " + SOFT_TEXT,
+    title: "放大 Larger"
+  }, "+"), /*#__PURE__*/React.createElement("span", {
+    className: "tabular-nums " + MID_TEXT + " w-10 text-right"
+  }, Math.round(textScale * 100), "%"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTextScale(1.0),
+    className: "px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 " + MID_TEXT,
+    title: "重置 Reset"
+  }, lang === "en" ? "Reset" : "重置")), /*#__PURE__*/React.createElement("div", {
+    className: "text-xs border-l " + BORDER + " pl-3 ml-1 flex items-center gap-1"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setLang("en"),
+    className: lang === "en" ? GOLD + " font-semibold" : "text-slate-400 hover:text-slate-200"
+  }, "EN"), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-600 mx-1"
+  }, "|"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setLang("zh"),
+    className: lang === "zh" ? GOLD + " font-semibold" : "text-slate-400 hover:text-slate-200"
+  }, "中文"))), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setDarkMode(d => !d),
+    title: darkMode ? "Switch to Light mode" : "Switch to Dark mode",
+    className: "ml-3 text-slate-400 hover:text-slate-200 text-base leading-none"
+  }, darkMode ? "\u2600\ufe0f" : "\ud83c\udf19")), /*#__PURE__*/React.createElement("div", {
+    className: "max-w-[1400px] mx-auto p-4 space-y-4",
+    style: {
+      zoom: textScale
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-1 border-b zwds-chrome " + BORDER
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("zwds"),
+    className: "px-4 py-2 font-semibold text-sm transition " + (tab === "zwds" ? "bg-slate-900 " + BORDER + " border border-b-0 " + GOLD : "text-slate-500 hover:text-slate-200")
+  }, lang === "en" ? "ZWDS" : "紫微斗数"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("bazi"),
+    className: "px-4 py-2 font-semibold text-sm transition " + (tab === "bazi" ? "bg-slate-900 " + BORDER + " border border-b-0 " + GOLD : "text-slate-500 hover:text-slate-200")
+  }, lang === "en" ? "Bazi" : "八字")), tab === "zwds" ? /*#__PURE__*/React.createElement("div", {
+    className: "bg-slate-900/60 " + BORDER + " border p-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between gap-3 mb-2 px-2 py-2 rounded border zwds-chrome " + GOLD_BORDER + " bg-slate-950/60"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 text-xs"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: FAINT_TEXT
+  }, lang === "en" ? "Star Brightness" : "星曜亮度"), /*#__PURE__*/React.createElement("div", {
+    className: "inline-flex rounded overflow-hidden border " + BORDER
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setSchool("sanhe"),
+    className: "px-3 py-1 text-xs transition " + (school === "sanhe" ? GOLD_BG + " text-slate-900 font-semibold" : "bg-slate-900 text-slate-300 hover:bg-slate-800"),
+    title: "《紫微斗数全书》三合派 — 主流传统亮度"
+  }, lang === "en" ? "San He \xb7 Classic" : "三合派 \xb7 全书"), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setSchool("zhongzhou"),
+    className: "px-3 py-1 text-xs transition " + (school === "zhongzhou" ? GOLD_BG + " text-slate-900 font-semibold" : "bg-slate-900 text-slate-300 hover:bg-slate-800"),
+    title: "王亭之 中州派 — iztro 默认亮度"
+  }, lang === "en" ? "Zhong Zhou \xb7 iztro" : "中州派 \xb7 iztro"))), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-slate-400 text-right max-w-[55%] leading-5 zwds-chrome"
+  }, school === "sanhe" ? /*#__PURE__*/React.createElement("span", null, lang === "en" ? "Active brightness: " : "当前亮度：", /*#__PURE__*/React.createElement("span", {
+    className: GOLD + " font-semibold"
+  }, lang === "en" ? "San He (Classic)" : "三合派（《紫微斗数全书》）"), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-500"
+  }, lang === "en" ? " — Interpret using San He star combinations. Avoid mixing schools." : "— 解读亦应遵循三合派星曜组合，避免跨派混用。")) : /*#__PURE__*/React.createElement("span", null, lang === "en" ? "Active brightness: " : "当前亮度：", /*#__PURE__*/React.createElement("span", {
+    className: GOLD + " font-semibold"
+  }, lang === "en" ? "Zhong Zhou (Wang Ting-Zhi / iztro)" : "中州派（王亭之 / iztro）"), /*#__PURE__*/React.createElement("span", {
+    className: "text-slate-500"
+  }, lang === "en" ? " — Interpret using Zhong Zhou star meanings. Avoid mixing schools." : "— 解读亦应遵循中州派星义体系，避免跨派混用。")))), /*#__PURE__*/React.createElement(ZwdsGrid, {
+    person: person,
+    highlightBranch: highlightBranch,
+    activeDecadalRange: activeDecadalRange,
+    onPalaceClick: onPalaceClick,
+    school: school
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "mt-2 text-xs text-slate-500 flex justify-between zwds-chrome"
+  }, /*#__PURE__*/React.createElement("span", null, lang === "en" ? "Click a palace to highlight & lock its Decade cycle \xb7 Sun/Moon brightness shown beside stars" : "点击宫位：高亮并锁定 大限 范围 \xB7 日夜星辉：太阳/太阴 旁标注"), /*#__PURE__*/React.createElement("span", null, highlightBranch && /*#__PURE__*/React.createElement("span", {
+    className: GOLD
+  }, lang === "en" ? "Selected: " : "已选：", (() => { const pal = person && person.zwds && person.zwds.palaces && person.zwds.palaces.find(p => p.earthly_branch === highlightBranch); if (!pal) return highlightBranch; return lang === "en" ? (PALACE_NAME_EN[pal.name] || pal.name) : pal.name; })())))) : /*#__PURE__*/React.createElement(BaziPanel, {
+    person: person,
+    selectedYear: selectedYear,
+    onYearClick: setSelectedYear
+  })), showNew && /*#__PURE__*/React.createElement(NewPersonForm, {
+    onClose: () => setShowNew(false),
+    onRegister: onRegister
+  }), showEdit && /*#__PURE__*/React.createElement(EditPersonForm, {
+    person: person,
+    onClose: () => setShowEdit(false),
+    onSave: onEdit
+  })));
+}
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
+</script>
+</body>
+</html>

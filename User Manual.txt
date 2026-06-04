@@ -1,0 +1,79 @@
+ASTROLOGY CHART CALCULATOR — USER MANUAL
+=========================================
+Copyright © 2026 Andy Low. All rights reserved.
+This software and its output are the intellectual property of Andy Low.
+Not to be redistributed or reproduced without permission.
+
+
+GETTING STARTED
+---------------
+Open destiny_reading.html in your web browser (Chrome or Edge recommended).
+If you want a Desktop shortcut, run "Create Desktop Shortcut.bat" once.
+
+
+ADDING YOUR BIRTH CHART
+------------------------
+1. Click "+ Add" in the top bar.
+
+2. Fill in the form:
+   - Name        : Your name or any label you like
+   - Gender      : Male or Female
+   - Date of Birth : Your birth date (year / month / day)
+   - Time of Birth : The time you were born
+
+   IMPORTANT — Time of Birth:
+   Enter the LOCAL time at the place you were born.
+   Do NOT adjust for daylight saving time.
+   If you were born in London in summer, and the clock said 3:00 PM,
+   enter 15:00 — even though clocks were on BST at the time.
+   Use the raw clock time of the country/city of birth.
+
+   If you do not know your birth time, you can go create all 12 different charts for that day
+   and ask the AI to help you find which hour you were born in by giving it more information about you.
+
+3. Click "Register". Your chart will appear immediately.
+
+
+SWITCHING BETWEEN CHARTS
+-------------------------
+Use the dropdown in the top bar to switch between saved people.
+You can add as many people as you like.
+
+
+EXPORTING YOUR CHART FOR AI ANALYSIS
+--------------------------------------
+1. Select the person whose chart you want to export.
+2. Click "Export" in the top bar.
+3. A .txt file will download to your computer.
+   This file contains your full BaZi (Eight Characters) and
+   Zi Wei Dou Shu (ZWDS) chart data in Chinese.
+
+
+SUBMITTING TO AI FOR YOUR READING
+-----------------------------------
+Attach the exported .txt file along with your prompts into
+an AI chat (such as Claude or Gemini). Example prompts are:
+
+
+--- PROMPT: PERSONALITY & DESTINY READING ---
+
+Attached is my Chinese Astrology birth data. Using both Bazi and ZWDS together, please give me a reading covering:
+- My core personality and natural strengths
+- Career and wealth potential
+- Relationships and marriage
+
+TIPS
+----
+- The app saves your charts automatically in your browser.
+  You do not need to re-enter them each time you open the app.
+- To back up your charts, click "↓ JSON" to save all your data.
+  To restore them on another device, click "↑ JSON" and load the file.
+- Use the EN / 中文 toggle in the top bar to switch languages.
+- Use the − / + buttons to adjust text size if the chart feels cramped.
+
+
+=========================================
+Astrology Chart Calculator V1.0
+Designed and developed by Andy Low
+Copyright © 2026 Andy Low. All rights reserved.
+=========================================
