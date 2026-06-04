@@ -1,6 +1,6 @@
-# Astrology Chart Calculator
+# Chinese Astrology Birth Chart Generator
 
-A free, standalone Chinese Astrology chart app that generates your **Zi Wei Dou Shu (ZWDS)** and **BaZi (Eight Characters)** birth chart — no install required, just open the HTML file in your browser.
+A free, standalone Chinese Astrology birth chart app that generates your **Zi Wei Dou Shu (ZWDS)** and **BaZi (Eight Characters)** birth chart — no install required, just open the HTML file in your browser.
 
 Built by **Andy Low**.
 
